@@ -1,21 +1,11 @@
-name: CI
-
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  # -------------------------------------------------------------
-  # Event `pull_request`: Returns all changed pull request files.
-  # --------------------------------------------------------------
   changed_files:
-    # NOTE:
-    # - This is limited to pull_request* events and would raise an error for other events.
-    # - A maximum of 3000 files can be returned.
-    # - For more flexibility and no limitations see "Using local .git directory" above.
-
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     name: Test changed-files
     permissions:
       pull-requests: read
@@ -25,10 +15,30 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v45
 
-      - name: List all changed files
+      - name: List changed files in a specific directory
         env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          SPECIFIC_DIR: path/to/specific/directory
+          MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
+          ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
+          DELETED_FILES: ${{ steps.changed-files.outputs.deleted_files }}
         run: |
-          for file in ${ALL_CHANGED_FILES}; do
-            echo "$file was changed"
+          echo "Modified files in $SPECIFIC_DIR:"
+          for file in ${MODIFIED_FILES}; do
+            if [[ "$file" == "$SPECIFIC_DIR"* ]]; then
+              echo "$file"
+            fi
+          done
+
+          echo "Added files in $SPECIFIC_DIR:"
+          for file in ${ADDED_FILES}; do
+            if [[ "$file" == "$SPECIFIC_DIR"* ]]; then
+              echo "$file"
+            fi
+          done
+
+          echo "Deleted files in $SPECIFIC_DIR:"
+          for file in ${DELETED_FILES}; do
+            if [[ "$file" == "$SPECIFIC_DIR"* ]]; then
+              echo "$file"
+            fi
           done
