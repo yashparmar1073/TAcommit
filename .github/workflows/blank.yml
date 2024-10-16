@@ -39,15 +39,15 @@ jobs:
    # -------------------------------------------------------------
    # # Fetch the name of the manuscript and category 
    # #--------------------------------------------------------------
-   # Name:
-   #   runs-on: ubuntu-latest
-   #   name: File Name
+  Name:
+     runs-on: ubuntu-latest
+     name: File Name
     
-   #   steps:
-   #    - uses: actions/checkout@v3
-   #    - name: Run Name Analysis
-   #      env:
-   #        ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+     steps:
+      - uses: actions/checkout@v3
+      - name: Run Name Analysis
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
    #      run: |
    #        import re
 
