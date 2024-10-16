@@ -36,16 +36,9 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
-   # -------------------------------------------------------------
-   # # Fetch the name of the manuscript and category 
-   # #--------------------------------------------------------------
-  Name:
-     runs-on: ubuntu-latest
-     name: File Name
     
-     steps:
-      - uses: actions/checkout@v3
       - name: Run Name Analysis
+      - uses: actions/checkout@v45
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
