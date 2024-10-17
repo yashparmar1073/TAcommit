@@ -43,46 +43,9 @@ jobs:
         run: |
           echo "Workspace directory: ${{ github.workspace }}"
           
-      - name: Running Python file
-        run: |
-          import re
-         
-         # Specify the file path
-         file_path = "${{ github.workspace }}/logs.txt"
-
-          # Read the file content
-          with open(file_path, 'r') as file:
-            file_content = file.read()
-
-          # Extract the "name" field key-value pair using a regular expression
-          name = r"name\s*=>\s*'([^']*)'"
-          name_match = re.search(name, file_content)
-
-          category = r"category\s*=>\s*'([^']*)'"
-          category_match = re.search(category, file_content)
-
-          team = r"team\s*=>\s*'([^']*)'"
-          team_match = re.search(team, file_content)
-
-          if category_match:
-            print(category_match.group(1).strip())
-          else:
-            print("No category field found in the file.")
-
-          if name_match:
-            print(name_match.group(1).strip())
-          else:
-            print("No name field found in the file.")
-
-          if team_match:
-            print(team_match.group(1).strip())
-          else:
-            print("No team field found in the file.")
-  
-      
-
-          
-          
-      # - name: Run Python script
-      #   run: |
-      #     python fetch_file_name.py
+      - name : Run python file
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12' 
+      - run: python my_script.py
