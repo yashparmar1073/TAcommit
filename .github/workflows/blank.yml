@@ -27,8 +27,7 @@ jobs:
         with:
          files: |
                *.manuscript
-        
-
+               
       - name: List all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
@@ -38,7 +37,6 @@ jobs:
           done
     
       - name: Run Name Analysis
-      - uses: actions/checkout@v45
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
