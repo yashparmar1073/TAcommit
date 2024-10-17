@@ -48,7 +48,10 @@ jobs:
         run: |
           echo "Workspace directory: ${{ github.workspace }}"
 
-         
-      - name: Run Python script
+      - name: List workspace contents
         run: |
-          python fetch_file_name.py
+          ls -la ${{ github.workspace }}
+          
+      # - name: Run Python script
+      #   run: |
+      #     python fetch_file_name.py
