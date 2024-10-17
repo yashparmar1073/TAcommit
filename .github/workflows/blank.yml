@@ -42,7 +42,6 @@ jobs:
       - name: Print workspace directory
         run: |
           echo "Workspace directory: ${{ github.workspace }}"
-
       - name: Running Python file
         run: |
           import re
