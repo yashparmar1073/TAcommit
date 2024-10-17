@@ -47,4 +47,4 @@ jobs:
          
       - name: Run Python script
         run: |
-          python ../fetch_file_name.py
+          python fetch_file_name.py
