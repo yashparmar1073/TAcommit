@@ -48,9 +48,9 @@ jobs:
         run: |
           echo "Workspace directory: ${{ github.workspace }}"
 
-      - name: List workspace contents
+      - name: Find file path
         run: |
-          ls -la ${{ github.workspace }}/.github/
+          locate fetch_file_name.py
       
 
           
