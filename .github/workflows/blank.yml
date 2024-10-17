@@ -36,40 +36,14 @@ jobs:
             echo "$file was changed"
           done
     
-      - name: Run Name Analysis
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+         python-version: 3.9
+      - name: Install dependencies
         run: |
-          import re
-
-          # Specify the file path
-          file_path = ALL_CHANGED_FILES
-          # Read the file content
-          with open(file_path, 'r') as file:
-              file_content = file.read()
-
-          # Extract the "name" field key-value pair using a regular expression
-          name  = r"name\s*=>\s*'([^']*)'"
-          name = re.search(name, file_content)
-
-          category = r"category\s*=>\s*'([^']*)'"
-          category = re.search(category, file_content)
-
-          team = r"team\s*=>\s*'([^']*)'"
-          team = re.search(team, file_content)
-
-          if category:
-              print(category.group(1).strip())
-          else:
-              print("No  field found in the file.")
-
-
-          if name:
-              print(name.group(1).strip())
-          else:
-              print("No  field found in the file.")
-
-          if team:
-              print(team.group(1).strip())
-          else:
-              print("No  field found in the file.")
+         python -m pip install --upgrade pip
+         pip install -r requirements.txt
+      - name: Run Python script
+         run: |
+          python 
