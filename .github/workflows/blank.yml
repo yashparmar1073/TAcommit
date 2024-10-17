@@ -45,7 +45,7 @@ jobs:
 
       - name: Find file path
         run: |
-          ls
+          ls -la
       
 
           
