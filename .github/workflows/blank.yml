@@ -45,7 +45,7 @@ jobs:
 
       - name: Find file path
         run: |
-          find ./ -name "fetch_file_name.py"
+          find ../ -name "fetch_file_name.py"
       
 
           
