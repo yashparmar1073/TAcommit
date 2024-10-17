@@ -43,9 +43,9 @@ jobs:
         run: |
           echo "Workspace directory: ${{ github.workspace }}"
           
-      - name : Run python file
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name : Python version
         with:
           python-version: '3.12' 
-      - run: python my_script.py
+
+      - name : Run pythonfile
+        run: python my_script.py
