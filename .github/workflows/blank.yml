@@ -72,5 +72,5 @@ jobs:
 
       - name : Run Python File
         run : |
-          python fetch_file_name.py --input-file changed_files.txt
+          python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
 
