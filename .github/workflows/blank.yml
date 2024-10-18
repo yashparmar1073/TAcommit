@@ -61,7 +61,7 @@ jobs:
          ls -la
      
 
-      - name : Run Python File
-        run : |
-          python fetch_file_name.py
+      # - name : Run Python File
+      #   run : |
+      #     python fetch_file_name.py
 
