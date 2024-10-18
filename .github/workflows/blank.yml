@@ -46,6 +46,8 @@ jobs:
       - name: Print Files before checkout
         run : |
          ls -la
+      - name: Print working directory
+        run : |
          ${{ github.workspace }}
        
 
