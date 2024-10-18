@@ -45,10 +45,10 @@ jobs:
         run: |
           echo "Workspace directory: ${{ github.workspace }}"
           
-      - name: Checkout to main branch
+      - name: Fetch Root Files
         uses: actions/checkout@v4
         with:
-         ref: main     
+         sparse-checkout: .     
     
       - name: Fetch Python File
         uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
             fetch_file_name.py
           sparse-checkout-cone-mode: true
 
-      - name : Run Python File
-        run : |
-          python fetch_file_name.py
+      # - name : Run Python File
+      #   run : |
+      #     python fetch_file_name.py
 
