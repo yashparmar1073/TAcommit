@@ -16,14 +16,14 @@ jobs:
       pull-requests: read
 
     steps:
-    #get the name of changed manuscripts
+     #get the name of changed manuscripts
       - name: Get changed manuscripts
         id: changed-files
         uses: tj-actions/changed-files@v45
         with:
          files: |
                *.manuscript
-               
+      # Print the changed file in the console         
       - name: List all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
@@ -41,11 +41,11 @@ jobs:
       #     echo ${{ github.workspace }}
        
 
-     #clone this repo
+      # clone this repo
       - name: Checkout
         uses: actions/checkout@v4.1.6
 
-    #setup for python
+      # setup for python
       - name: Set up Python
         uses: actions/setup-python@v2
       
@@ -64,7 +64,7 @@ jobs:
     
      
       # Name of the manuscripts inside changed_files.txt
-      - name: Wrtie name of changed manuscripts
+      - name: Write name of changed manuscripts
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
@@ -75,9 +75,9 @@ jobs:
          cat changed_files.txt
 
 
-      - name: Print Files
-        run : |
-         ls -la
+      # - name: Print Files
+      #   run : |
+      #    ls -la
          
 
       - name : Run Python File
