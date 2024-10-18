@@ -46,6 +46,7 @@ jobs:
       - name: Print Files before checkout
         run : |
          ls -la
+         ${{ github.workspace }}
        
 
      #clone this repo
