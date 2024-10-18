@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+  push: 
     branches:
       - main
 
@@ -34,6 +35,18 @@ jobs:
           
    
     #run python file
+
+     #clone this repo
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+
+      # Basic checkout
+      - name: Checkout basic
+        uses: ./
+        with:
+          ref: test-data/v2/basic
+          path: basic
+
       - name: Set up Python
         uses: actions/setup-python@v2
       
