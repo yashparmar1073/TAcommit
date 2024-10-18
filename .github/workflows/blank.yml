@@ -32,9 +32,7 @@ jobs:
             echo "$file was changed"
           done
           
-      - name: Checkout to specific branch
-        run: |
-         git checkout TAcommit
+   
     #run python file
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -48,6 +46,13 @@ jobs:
           echo "Workspace directory: ${{ github.workspace }}"
     
       - name: Run Python script
-        run: |
-         python TAcomit/fetch_file_name.py
+      - uses: actions/checkout@v4
+        with :
+          sparse-checkout: |
+            fetch_file_name.py
+          sparse-checkout-cone-mode: false
+
+      - name : Run Python File
+      - run : |
+        puython fetch_file_name.py
 
