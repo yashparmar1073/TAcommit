@@ -38,9 +38,11 @@ jobs:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           echo "${{ steps.changed-files.outputs.all_changed_files }}" > changed_files.txt
-          
-   
-    #run python file
+
+      - name: Print changed_files.txt file
+        run: | 
+         cat changed_files.txt
+       
 
      #clone this repo
       - name: Checkout
