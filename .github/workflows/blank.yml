@@ -50,7 +50,7 @@ jobs:
         with :
           sparse-checkout: |
             fetch_file_name.py
-          sparse-checkout-cone-mode: false
+          sparse-checkout-cone-mode: true
 
       - name : Run Python File
         run : |
