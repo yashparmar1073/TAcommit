@@ -39,13 +39,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.6
 
-      # Basic checkout
-      # - name: Checkout basic
-      #   uses: ./
-      #   with:
-      #     ref: test-data/v2/basic
-      #     path: basic
-
+    #setup for python
       - name: Set up Python
         uses: actions/setup-python@v2
       
@@ -62,12 +56,10 @@ jobs:
         with:
          sparse-checkout: .     
     
-      # - name: Fetch Python File
-      #   uses: actions/checkout@v4
-      #   with :
-      #     sparse-checkout: |
-      #       fetch_file_name.py
-      #     sparse-checkout-cone-mode: true
+      - name: Print Files
+        run : |
+         ls -la
+     
 
       - name : Run Python File
         run : |
