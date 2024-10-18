@@ -46,9 +46,9 @@ jobs:
           echo "Workspace directory: ${{ github.workspace }}"
           
       - name: Checkout to main branch
-        run: |
-          git checkout main
-     
+        uses: actions/checkout@v4
+        with:
+         ref: main     
     
       - name: Fetch Python File
         uses: actions/checkout@v4
