@@ -42,6 +42,10 @@ jobs:
       - name: Print changed_files.txt file
         run: | 
          cat changed_files.txt
+         
+      - name: Print Files before checkout
+        run : |
+         ls -la
        
 
      #clone this repo
@@ -70,7 +74,7 @@ jobs:
          ls -la
      
 
-      - name : Run Python File
-        run : |
-          python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
+      # - name : Run Python File
+      #   run : |
+      #     python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
 
