@@ -32,23 +32,13 @@ jobs:
             echo "$file was changed"
           done
 
-      # Name of the manuscripts inside changed_files.txt
-      - name: Wrtie name of changed manuscripts
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: |
-          echo "${{ steps.changed-files.outputs.all_changed_files }}" > changed_files.txt
-
-      - name: Print changed_files.txt file
-        run: | 
-         cat changed_files.txt
-         
-      - name: Print Files before checkout
-        run : |
-         ls -la
-      - name: Print working directory
-        run : |
-          echo ${{ github.workspace }}
+     
+      # - name: Print Files before checkout
+      #   run : |
+      #    ls -la
+      # - name: Print working directory
+      #   run : |
+      #     echo ${{ github.workspace }}
        
 
      #clone this repo
@@ -67,15 +57,28 @@ jobs:
         run: |
           echo "Workspace directory: ${{ github.workspace }}"
           
-      - name: Fetch Root Files
-        uses: actions/checkout@v4
-        with:
-         sparse-checkout: .     
+      # - name: Fetch Root Files
+      #   uses: actions/checkout@v4
+      #   with:
+      #    sparse-checkout: .     
     
+     
+      # Name of the manuscripts inside changed_files.txt
+      - name: Wrtie name of changed manuscripts
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          echo "${{ steps.changed-files.outputs.all_changed_files }}" > changed_files.txt
+
+      - name: Print changed_files.txt file
+        run: | 
+         cat changed_files.txt
+
+
       - name: Print Files
         run : |
          ls -la
-     
+         
 
       # - name : Run Python File
       #   run : |
