@@ -1,6 +1,6 @@
 return  {
     name     => 'red20_split_wan_dhcp_uplink',
-    category => 'RED',
+    category => ' RED',
     keywords => [
         'XGS',
         'Product Test Suite',
