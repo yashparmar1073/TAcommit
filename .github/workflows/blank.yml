@@ -48,7 +48,7 @@ jobs:
          ls -la
       - name: Print working directory
         run : |
-         ${{ github.workspace }}
+          echo ${{ github.workspace }}
        
 
      #clone this repo
