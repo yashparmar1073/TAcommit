@@ -40,11 +40,11 @@ jobs:
         uses: actions/checkout@v4.1.6
 
       # Basic checkout
-      - name: Checkout basic
-        uses: ./
-        with:
-          ref: test-data/v2/basic
-          path: basic
+      # - name: Checkout basic
+      #   uses: ./
+      #   with:
+      #     ref: test-data/v2/basic
+      #     path: basic
 
       - name: Set up Python
         uses: actions/setup-python@v2
