@@ -20,6 +20,47 @@ for item in file_content:
 print(file_name_array)
 
 
+#get current location 
+command = "pwd"
+try:
+    output = subprocess.check_output(command, shell=True, universal_newlines=True)
+    print("Command output:")
+    print(output)
+except subprocess.CalledProcessError as e:
+    print(f"Command failed with exit code: {e.returncode}")
+    print(f"Error output: {e.output}")
+
+
+
+
+#current location is used to open the file
+for file in file_name_array:
+    file_path= f'{output}'+f'{file}'
+    with open(file_path, 'r') as f:
+        file_data = f.read()
+    name  = r"name\s*=>\s*'([^']*)'"
+    name = re.search(name, file_data)  
+    
+    category = r"category\s*=>\s*'([^']*)'"
+    category = re.search(category, file_content)
+
+    team = r"team\s*=>\s*'([^']*)'"
+    team = re.search(team, file_content)
+    if name:
+        print(name.group(1).strip())
+    else:
+     print("No  field found in the file.") 
+     
+    if name:
+      print(name.group(1).strip())
+    else:
+       print("No  field found in the file.")
+  
+    if team:
+       print(team.group(1).strip())
+    else:
+     print("No  field found in the file.")
+
 
 # # Specify the file path
 # file_path = "/Users/yash.parmar/Documents/Perl/logs.txt"
