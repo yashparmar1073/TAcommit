@@ -36,9 +36,14 @@ except subprocess.CalledProcessError as e:
 
 #current location is used to open the file
 for file in file_name_array:
-    file_path= f'{output}'+f'{file}'
+    # Remove leading/trailing whitespace, including newline characters, output contains /n at the end
+    output = output.strip()  
+
+    #added / after the output to give proper path
+    file_path = f'{output}/{file}'
     with open(file_path, 'r') as f:
         file_data = f.read()
+        
     name  = r"name\s*=>\s*'([^']*)'"
     name = re.search(name, file_data)  
     
