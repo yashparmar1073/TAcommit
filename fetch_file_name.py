@@ -21,7 +21,7 @@ if ' ' in file_content:
 else:
     file_name_array = [file_content]
 
-print(file_name_array
+print(file_name_array)
 
 
 #current location is used to open the file
