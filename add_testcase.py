@@ -1,5 +1,6 @@
 #import requests
 import pickle
+import subprocess
 
 # url = 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management'
 # headers = {
