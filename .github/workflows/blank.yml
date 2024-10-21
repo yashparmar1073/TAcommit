@@ -78,9 +78,9 @@ jobs:
          cat changed_files.txt
 
 
-      # - name: Current location with pwd
-      #   run : |
-      #    pwd
+      - name: Current location files
+        run : |
+          ls -la
          
 
       - name : Run Python File
