@@ -21,7 +21,7 @@ for item in file_content:
 print(file_name_array)
 
 
-#get current location 
+#current location is used to open the file
 command = "pwd"
 try:
     output = subprocess.check_output(command, shell=True, universal_newlines=True)
@@ -33,8 +33,10 @@ except subprocess.CalledProcessError as e:
 
 
 
+#create dictionary which we use for the add testcase in ta page
+my_dict=dict()
 
-#current location is used to open the file
+
 for file in file_name_array:
     # Remove leading/trailing whitespace, including newline characters, output contains /n at the end
     output = output.strip()  
@@ -49,54 +51,25 @@ for file in file_name_array:
     
     category = r"category\s*=>\s*'([^']*)'"
     category = re.search(category, file_data)
-
-    team = r"team\s*=>\s*'([^']*)'"
-    team = re.search(team, file_data)
+    
+    #this saves for future if team name is added in manuscript
+    # team = r"team\s*=>\s*'([^']*)'"
+    # team = re.search(team, file_data)
     if name:
         print(name.group(1).strip())
-    else:
+    else: 
      print("No  field found in the file.") 
      
-    if name:
-      print(name.group(1).strip())
+   if category:
+      print(category.group(1).strip())
     else:
        print("No  field found in the file.")
-  
-    if team:
-       print(team.group(1).strip())
-    else:
-     print("No  field found in the file.")
+   my_dict[f'{name}']=f'{category}'
+print (my_dict)
+    #this saves for future if team name is added in manuscript
+    # if team:
+    #    print(team.group(1).strip())
+    # else:
+    #  print("No  field found in the file.")
 
 
-# # Specify the file path
-# file_path = "/Users/yash.parmar/Documents/Perl/logs.txt"
-
-# # Read the file content
-# with open(file_path, 'r') as file:
-#     file_content = file.read()
-
-# # Extract the "name" field key-value pair using a regular expression
-# name  = r"name\s*=>\s*'([^']*)'"
-# name = re.search(name, file_content)
-
-# category = r"category\s*=>\s*'([^']*)'"
-# category = re.search(category, file_content)
-
-# team = r"team\s*=>\s*'([^']*)'"
-# team = re.search(team, file_content)
-
-# if category:
-#     print(category.group(1).strip())
-# else:
-#     print("No  field found in the file.")
-
-
-# if name:
-#     print(name.group(1).strip())
-# else:
-#     print("No  field found in the file.")
-
-# if team:
-#     print(team.group(1).strip())
-# else:
-#     print("No  field found in the file.")
