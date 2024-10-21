@@ -4,23 +4,21 @@ import subprocess
 
 url = 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management'
 headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-    'Cache-Control': 'max-age=0',
-    'Connection': 'keep-alive',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Origin': 'https://core.heimdall.c03.pit.els.sophos',
-    'Referer': 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management',
-    'Cookie': 'user=yparmar; style=style; PHPSESSID=asipf61h42rkfai8e6nn6fff13',
-    'Sec-Fetch-Dest': 'document',
-    'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'same-origin',
-    'Sec-Fetch-User': '?1',
-    'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-    'sec-ch-ua': '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"macOS"'
+   'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:131.0) Gecko/20100101 Firefox/131.0' 
+  'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8' 
+   'Accept-Language: en-US,en;q=0.5' 
+   'Accept-Encoding: gzip, deflate, br, zstd' 
+   'Content-Type: application/x-www-form-urlencoded' 
+   'Origin: https://core.heimdall.c03.pit.els.sophos' 
+   'Connection: keep-alive' 
+ 'Referer: https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management&product=COP' 
+   'Cookie: user=yparmar; wfx_unq=ZkG13vVJBT8zsLDj; PHPSESSID=5glvi6gp7f22grqs8jc827no8p' 
+  'Upgrade-Insecure-Requests: 1' 
+   'Sec-Fetch-Dest: document' 
+   'Sec-Fetch-Mode: navigate' 
+  'Sec-Fetch-Site: same-origin' 
+  'Sec-Fetch-User: ?1' 
+   'Priority: u=0, i' 
 }
 
 #current location is used to open the file
