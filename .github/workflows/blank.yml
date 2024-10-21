@@ -78,19 +78,19 @@ jobs:
          cat changed_files.txt
 
 
-      - name: Current location files
-        run : |
-          ls -la
+      # - name: Current location files
+      #   run : |
+      #     ls -la
          
 
       - name : Run Python File
         run : |
           python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
 
-      - name: Current location files
-        run : |
-          ls -la
+      # - name: Current location files
+      #   run : |
+      #     ls -la
 
-      - name: Print dict file
-        run : |
-            cat output.pkl
+      # - name: Print dict file
+      #   run : |
+      #       cat output.pkl
