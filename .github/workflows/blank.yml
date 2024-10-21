@@ -90,3 +90,7 @@ jobs:
       - name: Current location files
         run : |
           ls -la
+
+      - name: Print dict file
+        run : |
+            cat output.pkl
