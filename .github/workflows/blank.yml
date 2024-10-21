@@ -53,9 +53,12 @@ jobs:
         run: |
          python -m pip install --upgrade pip
          
-      # - name: Print workspace directory
-      #   run: |
-      #     echo "Workspace directory: ${{ github.workspace }}"
+      - name: Print workspace directory
+        run: |
+          echo "Workspace directory: ${{ github.workspace }}"
+      - name: Current location with pwd
+        run : |
+          pwd   
           
       # - name: Fetch Root Files
       #   uses: actions/checkout@v4
@@ -75,9 +78,9 @@ jobs:
          cat changed_files.txt
 
 
-      # - name: Current location files
+      # - name: Current location with pwd
       #   run : |
-      #    ls -la
+      #    pwd
          
 
       - name : Run Python File
