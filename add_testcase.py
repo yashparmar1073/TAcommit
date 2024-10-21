@@ -11,6 +11,7 @@ headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Origin': 'https://core.heimdall.c03.pit.els.sophos',
     'Referer': 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management',
+    'Cookie': 'user=yparmar; style=style; PHPSESSID=asipf61h42rkfai8e6nn6fff13',
     'Sec-Fetch-Dest': 'document',
     'Sec-Fetch-Mode': 'navigate',
     'Sec-Fetch-Site': 'same-origin',
