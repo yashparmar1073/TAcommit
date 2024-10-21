@@ -9,7 +9,7 @@ args = parser.parse_args()
 #file_content=[]
 # Read the contents of the input file
 with open(args.input_file, 'r') as file:
-    file_content.append(file.read())
+    file_content=file.read()
 
 print(f'Input file contents: {file_content}')
 
