@@ -42,8 +42,8 @@ jobs:
        
 
       # clone this repo
-      - name: Checkout
-        uses: actions/checkout@v4.1.6
+      # - name: Checkout
+      #   uses: actions/checkout@v4.1.6
 
       # # setup for python
       # - name: Set up Python
@@ -75,9 +75,9 @@ jobs:
          cat changed_files.txt
 
 
-      - name: Print Files
-        run : |
-         ls -la
+      # - name: Current location files
+      #   run : |
+      #    ls -la
          
 
       - name : Run Python File
