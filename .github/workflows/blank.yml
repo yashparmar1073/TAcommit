@@ -41,9 +41,9 @@ jobs:
       #     echo ${{ github.workspace }}
        
 
-      # clone this repo
-      # - name: Checkout
-      #   uses: actions/checkout@v4.1.6
+      #clone this repo
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
 
       # # setup for python
       # - name: Set up Python
