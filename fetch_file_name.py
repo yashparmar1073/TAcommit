@@ -5,11 +5,12 @@ parser = argparse.ArgumentParser(description='My Python script')
 parser.add_argument('--input-file', type=str, required=True, help='Input file')
 args = parser.parse_args()
 
+file_content=[]
 # Read the contents of the input file
-with open(args.input_file, 'r') as f:
-    contents = f.read()
+with open(args.input_file, 'r') as file:
+    file_content.append(file.read())
 
-print(f'Input file contents: {contents}')
+print(f'Input file contents: {file_content}')
 
 # # Specify the file path
 # file_path = "/Users/yash.parmar/Documents/Perl/logs.txt"
