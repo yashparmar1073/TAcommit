@@ -16,9 +16,8 @@ print(f'Input file contents: {file_content}')
 file_name_array = []
 for item in file_content:
     file_name_array.extend(item.split())
-
 # file_name_array = file_content.split(' ')
-# print(file_name_array)
+print(file_name_array)
 
 
 
