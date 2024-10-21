@@ -12,6 +12,12 @@ with open(args.input_file, 'r') as file:
 
 print(f'Input file contents: {file_content}')
 
+#Store .txt file data as array 
+file_name_array = file_content.split(' ')
+print(file_name_array)
+
+
+
 # # Specify the file path
 # file_path = "/Users/yash.parmar/Documents/Perl/logs.txt"
 
