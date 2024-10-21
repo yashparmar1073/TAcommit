@@ -15,10 +15,13 @@ print(f'Input file contents: {file_content}')
 
 #Store .txt file data as array 
 file_name_array = []
-for item in file_content:
-    file_name_array.extend(item.split())
-# file_name_array = file_content.split(' ')
-print(file_name_array)
+#if single manuscript than direct put in the array otherwise split them and then put in array
+if ' ' in file_content:
+    file_name_array = file_content.split(' ')
+else:
+    file_name_array = [file_content]
+
+print(file_name_array
 
 
 #current location is used to open the file
