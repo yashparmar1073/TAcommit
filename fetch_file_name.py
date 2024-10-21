@@ -1,5 +1,6 @@
 import re
 import argparse
+import subprocess
 
 parser = argparse.ArgumentParser(description='My Python script')
 parser.add_argument('--input-file', type=str, required=True, help='Input file')
