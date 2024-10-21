@@ -33,7 +33,7 @@ except subprocess.CalledProcessError as e:
 
 
 output = output.strip()  
-file_path=f'{output} +'/output.pk'
+file_path=f"{output}" + "/output.pk"
 with open(file_path, "rb") as file:
     loaded_dict = pickle.load(file)
 
