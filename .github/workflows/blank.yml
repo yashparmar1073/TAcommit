@@ -83,7 +83,7 @@ jobs:
       #     ls -la
          
 
-      - name : Run Python File
+      - name : Run Fetch File Name file
         run : |
           python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
 
@@ -94,3 +94,7 @@ jobs:
       # - name: Print dict file
       #   run : |
       #       cat output.pkl
+
+      - name : Run add testcase file
+        run : |
+         python add_testcase.py 
