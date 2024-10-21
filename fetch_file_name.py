@@ -48,10 +48,10 @@ for file in file_name_array:
     name = re.search(name, file_data)  
     
     category = r"category\s*=>\s*'([^']*)'"
-    category = re.search(category, file_content)
+    category = re.search(category, file_data)
 
     team = r"team\s*=>\s*'([^']*)'"
-    team = re.search(team, file_content)
+    team = re.search(team, file_data)
     if name:
         print(name.group(1).strip())
     else:
