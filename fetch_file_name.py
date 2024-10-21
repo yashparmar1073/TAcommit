@@ -67,7 +67,7 @@ for file in file_name_array:
       print(category.group(1).strip())
     else:
        print("No  field found in the file.")
-    my_dict[f'{name}']=f'{category}'
+    my_dict[name.group(1).strip()]=category.group(1).strip()
 print (my_dict)
     #this saves for future if team name is added in manuscript
     # if team:
