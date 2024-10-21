@@ -75,9 +75,9 @@ jobs:
          cat changed_files.txt
 
 
-      # - name: Print Files
-      #   run : |
-      #    ls -la
+      - name: Print Files
+        run : |
+         ls -la
          
 
       - name : Run Python File
