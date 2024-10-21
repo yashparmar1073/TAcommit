@@ -43,7 +43,7 @@ my_dict=dict()
 for file in file_name_array:
     # Remove leading/trailing whitespace, including newline characters, output contains /n at the end
     output = output.strip()  
-
+    file = file.strip()
     #added / after the output to give proper path
     file_path = f'{output}/{file}'
     with open(file_path, 'r') as f:
