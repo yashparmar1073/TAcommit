@@ -1,4 +1,4 @@
-import requests
+#import requests
 import pickle
 
 # url = 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management'
