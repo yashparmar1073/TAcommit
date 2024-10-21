@@ -1,6 +1,7 @@
 import re
 import argparse
 import subprocess
+import pickle
 
 parser = argparse.ArgumentParser(description='My Python script')
 parser.add_argument('--input-file', type=str, required=True, help='Input file')
@@ -69,6 +70,10 @@ for file in file_name_array:
        print("No  field found in the file.")
     my_dict[name.group(1).strip()]=category.group(1).strip()
 print (my_dict)
+
+# Store dictionary
+with open("output.pkl", "wb") as file:
+    pickle.dump(my_dict, file)
     #this saves for future if team name is added in manuscript
     # if team:
     #    print(team.group(1).strip())
