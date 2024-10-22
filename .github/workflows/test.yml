@@ -114,7 +114,25 @@ jobs:
         run: | 
          cat changed_files.txt
 
-
+        #next two steps are for the print file in comment 
+      - name: Read file contents
+        id: read_second_file
+        run: |
+          contents=$(cat ${{ github.workspace }}/changed_files.txt)
+          echo "contents<<EOF" >> $GITHUB_OUTPUT
+          echo "$contents" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+      - name: PR comment with file
+        uses: thollander/actions-comment-pull-request@v3
+        env:
+         FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
+        with:
+          message: |
+            The following files have been changed:     
+            ```
+            ${{ env.FILE_CONTENTS }}
+            ```
       # - name: Current location files
       #   run : |
       #     ls -la
