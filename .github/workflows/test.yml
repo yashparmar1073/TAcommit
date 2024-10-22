@@ -59,23 +59,26 @@ jobs:
         uses: actions/checkout@v4.1.6
 
        #next two steps are for the print file in comment 
-      - name: PR comment with file
-        uses: thollander/actions-comment-pull-request@v3
-        env:
-         FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
-        with:
-          message: |
-            The following files have been changed:     
-            ```
-            ${{ env.FILE_CONTENTS }}
-            ```
-      - name: Read file contents
-        id: read_file
-        run: |
-          contents=$(cat ${{ github.workspace }}/changed_files.txt)
-          echo "contents<<EOF" >> $GITHUB_OUTPUT
-          echo "$contents" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      # - name: PR comment with file
+      #   uses: thollander/actions-comment-pull-request@v3
+      #   env:
+      #    FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
+      #   with:
+      #     message: |
+      #       The following files have been changed:     
+      #       ```
+      #       ${{ env.FILE_CONTENTS }}
+      #       ```
+      - name: Current location files
+        run : |
+          ls -la
+      # - name: Read file contents
+      #   id: read_file
+      #   run: |
+      #     contents=$(cat ${{ github.workspace }}/changed_files.txt)
+      #     echo "contents<<EOF" >> $GITHUB_OUTPUT
+      #     echo "$contents" >> $GITHUB_OUTPUT
+      #     echo "EOF" >> $GITHUB_OUTPUT
          
       # setup for python
       - name: Set up Python
