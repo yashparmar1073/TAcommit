@@ -32,7 +32,12 @@ jobs:
             echo "$file was changed"
           done
 
-     
+      #add comment in PR
+      - name: Write comment
+      - uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            **Hello MAIN**
       # - name: Print Files before checkout
       #   run : |
       #    ls -la
