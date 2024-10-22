@@ -69,6 +69,10 @@ jobs:
       #       ```
       #       ${{ env.FILE_CONTENTS }}
       #       ```
+      - name: Print workspace directory
+        run: |
+          echo "Workspace directory: ${{ github.workspace }}"
+          
       - name: Current location files
         run : |
           ls -la
