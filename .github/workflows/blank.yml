@@ -37,20 +37,8 @@ jobs:
         uses: mshick/add-pr-comment@v2
         with:
           message: |
-            **Hello MAIN**
-      - name: Write another comment
-        id: pr
-        run: |
-          issue=$(gh pr list --search "${{ github.sha }}" --state open --json number --jq ".[0].number")
-          echo "issue=$issue" >>$GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Third comment
-        uses: mshick/add-pr-comment@v2
-        with:
-          issue: ${{ steps.pr.outputs.issue }}
-          message: |
-            **Howdie!**
+           Hi This Side Yash Parmar
+    
       # - name: Print Files before checkout
       #   run : |
       #    ls -la
