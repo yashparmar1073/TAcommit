@@ -73,7 +73,7 @@ jobs:
          FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
         with:
           message: |
-            The following files have been changed:     
+            First Comment    
             ```
             ${{ env.FILE_CONTENTS }}
             ```
@@ -129,7 +129,7 @@ jobs:
          FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
         with:
           message: |
-            The following files have been changed:     
+            Second Comment    
             ```
             ${{ env.FILE_CONTENTS }}
             ```
