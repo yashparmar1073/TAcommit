@@ -34,7 +34,7 @@ jobs:
 
       #add comment in PR
       - name: Write comment
-      - uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v2
         with:
           message: |
             **Hello MAIN**
