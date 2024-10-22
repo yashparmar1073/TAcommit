@@ -46,18 +46,12 @@ jobs:
       #   run : |
       #     echo ${{ github.workspace }}
      
-      - name: Create comment
-        uses: peter-evans/create-or-update-comment@v4
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v3
         with:
-          #issue-number: 1
-          body: |
-            This is a multi-line test comment
-            - With GitHub **Markdown** :sparkles:
-            - Created by [create-or-update-comment][1]
-
-            [1]: https://github.com/peter-evans/create-or-update-comment
-          #reactions: '+1'
-
+          message: |
+            Hello world ! :wave:
+            
       #clone this repo
       - name: Checkout
         uses: actions/checkout@v4.1.6
