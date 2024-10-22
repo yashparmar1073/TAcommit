@@ -10,7 +10,7 @@ jobs:
   # Event `pull_request`: Returns all changed pull request files.
   # --------------------------------------------------------------
   changed_files:
-    runs-on: macos-latest || ubuntu-latest
+    runs-on: macos-latest || windows-latest || ubuntu-latest
     name: Test changed-files
     permissions:
       pull-requests: read
