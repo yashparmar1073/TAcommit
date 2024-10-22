@@ -61,7 +61,9 @@ jobs:
       - name: PR comment with file
         uses: thollander/actions-comment-pull-request@v3
         with:
-         filePath: ${{ github.workspace }}/changed_files.txt
+         filePath: |
+           ${{ github.workspace }}/changed_files.txt
+         
       # setup for python
       - name: Set up Python
         uses: actions/setup-python@v2
