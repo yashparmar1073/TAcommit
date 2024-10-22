@@ -63,7 +63,9 @@ jobs:
         with:
           message: |
              The following files have been changed:
-             ${{ github.workspace }}/changed_files.txt
+              ```
+              $(cat ${{ github.workspace }}/changed_files.txt)
+              ```
          
       # setup for python
       - name: Set up Python
