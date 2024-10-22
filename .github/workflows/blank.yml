@@ -97,6 +97,6 @@ jobs:
       #   run : |
       #       cat output.pkl
 
-      - name : Run add testcase file
-        run : |
-         python add_testcase.py 
+      # - name : Run add testcase file
+      #   run : |
+      #    python add_testcase.py 
