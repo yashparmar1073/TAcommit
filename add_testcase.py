@@ -1,6 +1,6 @@
 import requests
 import pickle
-import subprocess
+from team_data import team_data
 
 url = 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management'
 headers = {
@@ -36,14 +36,22 @@ headers = {
 #     loaded_dict = pickle.load(file)
 
 #print(loaded_dict)
+
+
+#this code will change as we don't have dynamic selection of categoy 
+#update this code at time of integration
+#fetch team name from the team data
+category = 'Administration'
+team = team_data[category]
+print (team)
 data = {
     'id': '',
-    'product': 'COP',
+    'product':'COP' ,
     'product_add': '',
     'category': 'Administration',
     'category_add': '',
     'testcase': 'aaaaayash',
-    'team': 'Base',
+    'team': team,
     'effort': '0',
     'notes': '',
     'OK': 'OK'
