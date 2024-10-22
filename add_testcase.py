@@ -4,20 +4,19 @@ import subprocess
 
 url = 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management'
 headers = {
-   #'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:131.0) Gecko/20100101 Firefox/131.0' 
-   'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8' 
-   'Accept-Language: en-US,en;q=0.5' 
-   'Accept-Encoding: gzip, deflate, br, zstd' 
-   'Content-Type: application/x-www-form-urlencoded' 
-   'Origin: https://core.heimdall.c03.pit.els.sophos' 
-   'Connection: keep-alive' 
-   'Referer: https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management&product=COP' 
-   'Upgrade-Insecure-Requests: 1' 
-   'Sec-Fetch-Dest: document' 
-   'Sec-Fetch-Mode: navigate' 
-   'Sec-Fetch-Site: same-origin' 
-   'Sec-Fetch-User: ?1' 
-   'Priority: u=0, i' 
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate, br, zstd',
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Origin': 'https://core.heimdall.c03.pit.els.sophos',
+    'Connection': 'keep-alive',
+    'Referer': 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management&product=COP',
+    'Upgrade-Insecure-Requests': '1',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-User': '?1',
+    'Priority': 'u=0, i'
 }
 
 #current location is used to open the file
