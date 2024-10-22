@@ -20,20 +20,20 @@ headers = {
 }
 
 #current location is used to open the file
-command = "pwd"
-try:
-    output = subprocess.check_output(command, shell=True, universal_newlines=True)
-    print("Command output:")
-    print(output)
-except subprocess.CalledProcessError as e:
-    print(f"Command failed with exit code: {e.returncode}")
-    print(f"Error output: {e.output}")
+# command = "pwd"
+# try:
+#     output = subprocess.check_output(command, shell=True, universal_newlines=True)
+#     print("Command output:")
+#     print(output)
+# except subprocess.CalledProcessError as e:
+#     print(f"Command failed with exit code: {e.returncode}")
+#     print(f"Error output: {e.output}")
 
 
-output = output.strip()  
-file_path=f"{output}" + "/output.pkl"
-with open(file_path, "rb") as file:
-    loaded_dict = pickle.load(file)
+# output = output.strip()  
+# file_path=f"{output}" + "/output.pkl"
+# with open(file_path, "rb") as file:
+#     loaded_dict = pickle.load(file)
 
 #print(loaded_dict)
 data = {
