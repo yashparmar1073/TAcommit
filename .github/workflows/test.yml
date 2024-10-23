@@ -63,20 +63,20 @@ jobs:
         id: read_file
         run: |
           contents=$(cat ${{ github.workspace }}/hello.txt)
-          echo "contents<<EOF" >> $GITHUB_OUTPUT
-          echo "$contents" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          
+          echo "contents<<table" >> $GITHUB_OUTPUT
+          echo "| Field | Value |" >> $GITHUB_OUTPUT
+          echo "| --- | --- |" >> $GITHUB_OUTPUT
+          echo "| File Contents | $contents |" >> $GITHUB_OUTPUT
+          echo "table" >> $GITHUB_OUTPUT
+
       - name: PR comment with file
         uses: thollander/actions-comment-pull-request@v3
         env:
-         FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
+          FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
         with:
           message: |
-            First Comment    
-            ```
-            ${{ env.FILE_CONTENTS }}
-            ```
+            First Comment
+            ${{ steps.read_file.outputs.contents }}
       
 
          
