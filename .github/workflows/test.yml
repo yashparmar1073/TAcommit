@@ -43,6 +43,9 @@ jobs:
               new_file=$(echo $file | jq -r '.filename')
               echo "The .manuscript file $old_file was renamed to $new_file"
             fi
+            elif [ "$status" != "renamed" ] && [[ "$filename" == *.manuscript ]]; then
+              echo "The .manuscript file was not renamed in this pull request."
+            fi
           done
 
     
