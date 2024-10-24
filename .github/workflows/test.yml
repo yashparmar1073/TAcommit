@@ -6,6 +6,26 @@ on:
       - main
 
 jobs:
+
+  get-renamed-manuscript-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Renamed .manuscript File
+        env:
+          FILES: ${{ toJson(github.event.pull_request.files) }}
+        run: |
+          IFS=$'\n'
+          for file in $(echo "${FILES}" | jq -r '.[] | @base64'); do
+            _file=$(echo ${file} | base64 --decode)
+            status=$(echo $_file | jq -r '.status')
+            filename=$(echo $_file | jq -r '.filename')
+            if [ "$status" == "renamed" ] && [[ "$filename" == *.manuscript ]]; then
+              old_file=$(echo $_file | jq -r '.previous_filename')
+              new_file=$(echo $_file | jq -r '.filename')
+              echo "The .manuscript file '$old_file' was renamed to '$new_file'"
+            fi
+          done
+
   # -------------------------------------------------------------
   # Event `pull_request`: Returns all changed pull request files.
   # --------------------------------------------------------------
@@ -31,25 +51,7 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
-
-      - name: Get Renamed .manuscript File
-        env:
-          FILES: ${{ toJson(github.event.pull_request.files) }}
-        run: |
-          files=($FILES)
-          for ((i=0; i<${#files[@]}; i++)); do
-            file="${files[$i]}"
-            status=$(echo $file | jq -r '.status')
-            filename=$(echo $file | jq -r '.filename')
-            if [ "$status" == "renamed" ] && [[ "$filename" == *.manuscript ]]; then
-              old_file=$(echo $file | jq -r '.previous_filename')
-              new_file=$(echo $file | jq -r '.filename')
-              echo "The .manuscript file '$old_file' was renamed to '$new_file'"
-            fi
-          done
-          echo "Not found anything"
-
-    
+   
       #add comment in PR
       - name: Write comment
         uses: mshick/add-pr-comment@v2
