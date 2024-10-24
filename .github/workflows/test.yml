@@ -33,17 +33,18 @@ jobs:
           done
 
       - name: Get Renamed .manuscript File
+        env:
+          FILES: ${{ toJson(github.event.pull_request.files) }}
         run: |
-          for file in ${{ toJson(github.event.pull_request.files) }}
-          do
+          files=($FILES)
+          for ((i=0; i<${#files[@]}; i++)); do
+            file="${files[$i]}"
             status=$(echo $file | jq -r '.status')
             filename=$(echo $file | jq -r '.filename')
             if [ "$status" == "renamed" ] && [[ "$filename" == *.manuscript ]]; then
               old_file=$(echo $file | jq -r '.previous_filename')
               new_file=$(echo $file | jq -r '.filename')
               echo "The .manuscript file $old_file was renamed to $new_file"
-            elif [ "$status" != "renamed" ] && [[ "$filename" == *.manuscript ]]; then
-              echo "The .manuscript file was not renamed in this pull request."
             fi
           done
 
