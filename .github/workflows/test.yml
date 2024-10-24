@@ -32,6 +32,19 @@ jobs:
             echo "$file was changed"
           done
 
+      - name: Get Renamed File
+        run: |
+          for file in ${{ toJson(github.event.pull_request.files) }}
+          do
+            status=$(echo $file | jq -r '.status')
+            if [ "$status" == "renamed" ]; then
+              old_file=$(echo $file | jq -r '.previous_filename')
+              new_file=$(echo $file | jq -r '.filename')
+              echo "The file $old_file was renamed to $new_file"
+            fi
+          done
+
+    
       #add comment in PR
       - name: Write comment
         uses: mshick/add-pr-comment@v2
