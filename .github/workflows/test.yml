@@ -32,15 +32,16 @@ jobs:
             echo "$file was changed"
           done
 
-      - name: Get Renamed File
+      - name: Get Renamed .manuscript File
         run: |
           for file in ${{ toJson(github.event.pull_request.files) }}
           do
             status=$(echo $file | jq -r '.status')
-            if [ "$status" == "renamed" ]; then
+            filename=$(echo $file | jq -r '.filename')
+            if [ "$status" == "renamed" ] && [[ "$filename" == *.manuscript ]]; then
               old_file=$(echo $file | jq -r '.previous_filename')
               new_file=$(echo $file | jq -r '.filename')
-              echo "The file $old_file was renamed to $new_file"
+              echo "The .manuscript file $old_file was renamed to $new_file"
             fi
           done
 
