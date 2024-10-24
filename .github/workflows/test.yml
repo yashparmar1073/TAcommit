@@ -6,25 +6,6 @@ on:
       - main
 
 jobs:
-
-  get-renamed-manuscript-file:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Renamed Files
-        env:
-          FILES: ${{ toJson(github.event.pull_request.files) }}
-        run: |
-          IFS=$'\n'
-          for file in $(echo "${FILES}" | jq -r '.[] | @base64'); do
-            _file=$(echo ${file} | base64 --decode)
-            status=$(echo $_file | jq -r '.status')
-            if [ "$status" == "renamed" ]; then
-              old_file=$(echo $_file | jq -r '.previous_filename')
-              new_file=$(echo $_file | jq -r '.filename')
-              echo "The file '$old_file' was renamed to '$new_file'"
-            fi
-          done
-
   # -------------------------------------------------------------
   # Event `pull_request`: Returns all changed pull request files.
   # --------------------------------------------------------------
