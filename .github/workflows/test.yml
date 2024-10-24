@@ -44,7 +44,7 @@ jobs:
             if [ "$status" == "renamed" ] && [[ "$filename" == *.manuscript ]]; then
               old_file=$(echo $file | jq -r '.previous_filename')
               new_file=$(echo $file | jq -r '.filename')
-              echo "The .manuscript file $old_file was renamed to $new_file"
+              echo "The .manuscript file '$old_file' was renamed to '$new_file'"
             fi
           done
           echo "Not found anything"
