@@ -3,7 +3,7 @@ import argparse
 import subprocess
 import pickle
 
-parser = argparse.ArgumentParser(description='My Python script')
+parser = argparse.ArgumentParser()
 parser.add_argument('--input-file', type=str, required=True, help='Input file')
 args = parser.parse_args()
 
