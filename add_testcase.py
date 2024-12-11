@@ -48,7 +48,7 @@ data = {
     'id': '',
     'product':'COP' ,
     'product_add': '',
-    'category':category ,
+    'category':'Administration' ,
     'category_add': '',
     'testcase': 'aaaaayash',
     'team': team,
