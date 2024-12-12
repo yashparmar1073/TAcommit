@@ -164,6 +164,3 @@ jobs:
       - name: Pull Request Target Branch Check
         uses: drankhil/pull-request-target-branch-check@eef8db50c3e303698473c58c8015c2369c0470b1  # v1.2.0
 
-
-      - name: Echo Target Branch
-        run: echo "The target branch is: ${{ steps.target_branch.outputs.target_branch }}"
