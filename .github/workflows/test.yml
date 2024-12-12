@@ -146,7 +146,7 @@ jobs:
         run : |
           ls -la
 
-      - name: Current location files
+      - name: Check Ping status of ta dev
         run : |
           ping -c 4 ta-dev.manual.els.sophos
 
