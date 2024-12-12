@@ -146,9 +146,9 @@ jobs:
         run : |
           ls -la
 
-      # - name: Print dict file
-      #   run : |
-      #       cat output.pkl
+      - name: Print dict file
+        run : |
+            cat output.pkl
 
       # - name : Run add testcase file
       #   run : |
