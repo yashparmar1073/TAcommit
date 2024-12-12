@@ -1,5 +1,6 @@
 import requests
-import pickle
+import subprocess
+#import pickle
 from team_data import team_data
 
 url = 'https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management'
@@ -43,6 +44,7 @@ headers = {
 #fetch team name from the team data
 category = 'Administration'
 team = team_data[category]
+
 print (team)
 data = {
     'id': '',
@@ -61,3 +63,31 @@ response = requests.post(url, headers=headers, data=data, verify=False)
 
 print(response.status_code)
 #print(response.text)
+
+command = "python3 -m pip install --upgrade pip"
+try:
+     output = subprocess.check_output(command, shell=True, universal_newlines=True)
+     print("Command output:")
+     print(output)
+except subprocess.CalledProcessError as e:
+     print(f"Command failed with exit code: {e.returncode}")
+     print(f"Error output: {e.output}")
+
+command = "pip install selenium"
+try:
+     output = subprocess.check_output(command, shell=True, universal_newlines=True)
+     print("Command output:")
+     print(output)
+except subprocess.CalledProcessError as e:
+     print(f"Command failed with exit code: {e.returncode}")
+     print(f"Error output: {e.output}")
+
+
+command = "python3 testplan_selenium.py staging/v20.0.Maint.060.Apataki 20_0_2_378 temp.txt"
+try:
+     output = subprocess.check_output(command, shell=True, universal_newlines=True)
+     print("Command output:")
+     print(output)
+except subprocess.CalledProcessError as e:
+     print(f"Command failed with exit code: {e.returncode}")
+     print(f"Error output: {e.output}")
