@@ -160,11 +160,11 @@ jobs:
 
 
 
-      # - name: Checkout Code
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 2
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
-      # - name: Pull Request Target Branch Check
-      #   uses: drankhil/pull-request-target-branch-check@eef8db50c3e303698473c58c8015c2369c0470b1  # v1.2.0
+      - name: Find Target branch namae
+        uses: drankhil/pull-request-target-branch-check@eef8db50c3e303698473c58c8015c2369c0470b1  # v1.2.0
 
