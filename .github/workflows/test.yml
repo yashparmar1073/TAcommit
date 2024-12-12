@@ -146,9 +146,13 @@ jobs:
         run : |
           ls -la
 
-      - name: Print dict file
+      - name: Current location files
         run : |
-            cat output.pkl
+          ping -c 4 ta-dev.manual.els.sophos
+
+      # - name: Print dict file
+      #   run : |
+      #       cat output.pkl
 
       # - name : Run add testcase file
       #   run : |
