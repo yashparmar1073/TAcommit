@@ -39,15 +39,131 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
+          
+   #add comment in PR
+    - name: Write comment
+      uses: mshick/add-pr-comment@v2
+      with:
+        message: |
+           Hi This Side Yash Parmar
+    
+      # - name: Print Files before checkout
+      #   run : |
+      #    ls -la
+      # - name: Print working directory
+      #   run : |
+      #     echo ${{ github.workspace }}
+     
+    - name: Comment PR
+      uses: thollander/actions-comment-pull-request@v3
+      with:
+        message: |
+            Hello world ! :wave:
+    
+     
+            
+      #clone this repo
+    - name: Checkout
+      uses: actions/checkout@v4.1.6
+
+       #next two steps are for the print file in comment 
+    - name: Read file contents
+      id: read_file
+      run: |
+          contents=$(cat ${{ github.workspace }}/hello.txt)
+          echo "contents<<table" >> $GITHUB_OUTPUT
+          echo "| Field | Value |" >> $GITHUB_OUTPUT
+          echo "| --- | --- |" >> $GITHUB_OUTPUT
+          echo "| File Contents | $contents |" >> $GITHUB_OUTPUT
+          echo "table" >> $GITHUB_OUTPUT
+
+    - name: PR comment with file
+      uses: thollander/actions-comment-pull-request@v3
+      env:
+        FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
+        with:
+          message: |
+            First Comment
+            ${{ steps.read_file.outputs.contents }}
+      
+
+         
+    # setup for python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      
+    - name: Install dependencies
+      run: |
+         python -m pip install --upgrade pip
+         pip install requests
+         
+    - name: Print workspace directory
+      run: |
+          echo "Workspace directory: ${{ github.workspace }}"
+          
     - name: Current location with pwd
       run : |
-          pwd 
+          pwd   
+          
+      # - name: Fetch Root Files
+      #   uses: actions/checkout@v4
+      #   with:
+      #    sparse-checkout: .     
+    
+     
+    # Name of the manuscripts inside changed_files.txt
+    - name: Write name of changed manuscripts
+      env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      run: |
+          echo "${{ steps.changed-files.outputs.all_changed_files }}" > changed_files.txt
+
+    - name: Print changed_files.txt file
+      run: | 
+         cat changed_files.txt
+
+    #next two steps are for the print file in comment 
+    - name: Read file contents
+      id: read_second_file
+      run: |
+          contents=$(cat ${{ github.workspace }}/changed_files.txt)
+          echo "contents<<EOF" >> $GITHUB_OUTPUT
+          echo "$contents" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+    - name: PR comment with file
+      uses: thollander/actions-comment-pull-request@v3
+      env:
+         FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
+      with:
+          message: |
+            Second Comment    
+            ```
+            ${{ env.FILE_CONTENTS }}
+            ```
+      # - name: Current location files
+      #   run : |
+      #     ls -la
+         
+
+    - name : Run Fetch File Name file
+      run : |
+          python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
+
     - name: Current location files
       run : |
           ls -la
+
+          
+
+    - name: Print pull request number
+      run: |
+        echo "The pull request number is: ${{ github.event.inputs.pull_request_number }}"
+        
     - name: Print Pull Request Branch
       run: |
         echo "The pull request branch is: ${{ github.event.inputs.pull_request_branch }}"
+        
     - name: Print sw_verison
       run: |
         echo "The sw_verison is: ${{ github.event.inputs.verison }}"
