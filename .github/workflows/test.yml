@@ -54,9 +54,9 @@ jobs:
     
      
             
-      # #clone this repo
-      # - name: Checkout
-      #   uses: actions/checkout@v4.1.6
+      #clone this repo
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
 
        #next two steps are for the print file in comment 
       - name: Read file contents
@@ -144,7 +144,7 @@ jobs:
 
       - name : Run Fetch File Name file
         run : |
-          python fetch_file_name.py --input-file ${{ github.workspace }}/pr-files/changed_files.txt
+          python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
 
       - name: Current location files
         run : |
