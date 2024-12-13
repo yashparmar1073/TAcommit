@@ -3,6 +3,9 @@ name: Manual Trigger PR Workflow
 on:
   workflow_dispatch:
     inputs:
+      pull_request_number:
+        description: 'Pull Request Number'
+        required: true
       pull_request_branch:
         description: 'Pull Request Branch'
         required: true
