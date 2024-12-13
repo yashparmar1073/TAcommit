@@ -81,8 +81,8 @@ jobs:
       uses: thollander/actions-comment-pull-request@v3
       env:
         FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
-        with:
-          message: |
+      with:
+         message: |
             First Comment
             ${{ steps.read_file.outputs.contents }}
       
