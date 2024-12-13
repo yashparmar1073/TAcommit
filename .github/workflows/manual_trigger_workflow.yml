@@ -39,7 +39,7 @@ jobs:
           ls -la
     - name: Print Pull Request Branch
       run: |
-        echo "The pull request number is: ${{ github.event.inputs.pull_request_branch }}"
+        echo "The pull request branch is: ${{ github.event.inputs.pull_request_branch }}"
     - name: Print sw_verison
       run: |
-        echo "The pull request number is: ${{ github.event.inputs.verison }}"
+        echo "The sw_verison is: ${{ github.event.inputs.verison }}"
