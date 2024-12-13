@@ -114,6 +114,10 @@ jobs:
         run: | 
          cat changed_files.txt
 
+      - name: Current location files
+        run : |
+          ls -la
+
         #next two steps are for the print file in comment 
       - name: Read file contents
         id: read_second_file
