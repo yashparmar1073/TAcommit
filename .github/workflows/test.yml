@@ -144,7 +144,7 @@ jobs:
 
       - name : Run Fetch File Name file
         run : |
-          python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
+          python fetch_file_name.py --input-file ${{ github.workspace }}/pr-files/changed_files.txt
 
       - name: Current location files
         run : |
