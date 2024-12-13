@@ -151,7 +151,7 @@ jobs:
     - name: Add comment to pull request
       uses: peter-evans/create-or-update-comment@v1
       with:
-        issue-number: ${{ github.event.pull_request_number }}
+        issue-number: ${{ github.event.inputs.pull_request_number }}
         body: |
             | Comment |
             | --- |
