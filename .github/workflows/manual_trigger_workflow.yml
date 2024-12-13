@@ -7,7 +7,7 @@ on:
         description: 'Pull Request Branch'
         required: true
       verison: 
-        description: 'Specify version to run Testplan'
+        description: 'sw_version to run Testplan'
         required: true
 
 jobs:
@@ -37,3 +37,9 @@ jobs:
     - name: Current location files
       run : |
           ls -la
+    - name: Print Pull Request Branch
+      run: |
+        echo "The pull request number is: ${{ github.event.inputs.pull_request_branch }}"
+    - name: Print sw_verison
+      run: |
+        echo "The pull request number is: ${{ github.event.inputs.verison }}"
