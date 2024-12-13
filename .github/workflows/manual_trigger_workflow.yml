@@ -5,15 +5,15 @@ on:
 
 jobs:
   example_job:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest #|| windows-latest || macos-latest
     name: Test changed-files
     permissions:
       pull-requests: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Run a script
-        run: echo "This is a manually triggered workflow."
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
+      # - name: Run a script
+      #   run: echo "This is a manually triggered workflow."
 
 #   changed_files:
 #     runs-on:  ubuntu-latest #|| windows-latest || macos-latest
