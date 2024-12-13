@@ -148,11 +148,17 @@ jobs:
     #         ```
     #         ${{ env.FILE_CONTENTS }}
     #         ```
-    - name: Print comment in table form
-      run: |
-          echo "| Comment |"
-          echo "| --- |"
-          echo "| ${{ github.event.inputs.pull_request_branch }} |"
+    - name: Add comment to pull request
+      uses: peter-evans/create-or-update-comment@v1
+      with:
+          issue-number: ${{ github.event.pull_request_number }}
+          body: |
+            | Comment |
+            | --- |
+            | ${{ github.event.inputs.pull_request_branch }} |
+          environmental-file: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
     
     - name: PR file to runner location    
       uses: actions/checkout@v3
