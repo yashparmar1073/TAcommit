@@ -54,11 +54,11 @@ jobs:
       #   run : |
       #     echo ${{ github.workspace }}
      
-    - name: Comment PR
-      uses: thollander/actions-comment-pull-request@v3
-      with:
-        message: |
-            Hello world ! :wave:
+    # - name: Comment PR
+    #   uses: thollander/actions-comment-pull-request@v3
+    #   with:
+    #     message: |
+    #         Hello world ! :wave:
     
      
             
