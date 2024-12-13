@@ -140,7 +140,7 @@ jobs:
             ${{ env.FILE_CONTENTS }}
             ```
     - name: PR file to runner location    
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
       with:
         ref: refs/pull/${{ github.event.inputs.pull_request_number }}/head
         path: ${{ github.workspace }}/pr-files
