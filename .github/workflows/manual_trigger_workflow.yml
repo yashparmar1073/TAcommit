@@ -27,3 +27,10 @@ jobs:
         echo "Changed files:"
         echo "${{ steps.changed-files.outputs.all_changed_files }}"
         # Add your testing steps here
+    
+    - name: Current location with pwd
+      run : |
+          pwd 
+    - name: Current location files
+      run : |
+          ls -la
