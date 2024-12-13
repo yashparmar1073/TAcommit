@@ -145,10 +145,10 @@ jobs:
           body: |
             Second Comment    
             ```
-            ${{ env.FILE_CONTENTS }}
+            ${{ env.steps.read_second_file.outputs.contents }}
             ```
-          environmental-file: |
-             FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
+          # environmental-file: |
+          #    FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
 
 
          
