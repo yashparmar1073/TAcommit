@@ -138,16 +138,20 @@ jobs:
           echo "$contents" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           
-    # - name: PR comment with file
-    #   uses: thollander/actions-comment-pull-request@v3
-    #   env:
-    #      FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
-    #   with:
-    #       message: |
-    #         Second Comment    
-    #         ```
-    #         ${{ env.FILE_CONTENTS }}
-    #         ```
+    - name: PR comment with file
+      uses: peter-evans/create-or-update-comment@v1
+      with:
+          issue-number: ${{ github.event.inputs.pull_request_number }}
+          body: |
+            Second Comment    
+            ```
+            ${{ env.FILE_CONTENTS }}
+            ```
+          environmental-file: |
+             FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
+
+
+         
     - name: Add comment to pull request
       uses: peter-evans/create-or-update-comment@v1
       with:
