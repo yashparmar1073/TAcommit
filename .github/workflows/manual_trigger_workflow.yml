@@ -52,11 +52,11 @@ jobs:
       #   run : |
       #     echo ${{ github.workspace }}
      
-    # - name: Comment PR
-    #   uses: thollander/actions-comment-pull-request@v3
-    #   with:
-    #     message: |
-    #         Hello world ! :wave:
+    - name: Comment PR
+      uses: thollander/actions-comment-pull-request@v3
+      with:
+        message: |
+            Hello world ! :wave:
     
      
             
@@ -64,7 +64,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4.1.6
 
-       #next two steps are for the print file in comment 
+     #next two steps are for the print file in comment 
     - name: Read file contents
       id: read_file
       run: |
@@ -75,14 +75,14 @@ jobs:
           echo "| File Contents | $contents |" >> $GITHUB_OUTPUT
           echo "table" >> $GITHUB_OUTPUT
 
-    # - name: PR comment with file
-    #   uses: thollander/actions-comment-pull-request@v3
-    #   env:
-    #     FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
-    #   with:
-    #      message: |
-    #         First Comment
-    #         ${{ steps.read_file.outputs.contents }}
+    - name: PR comment with file
+      uses: thollander/actions-comment-pull-request@v3
+      env:
+        FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
+      with:
+         message: |
+            First Comment
+            ${{ steps.read_file.outputs.contents }}
       
 
          
@@ -129,16 +129,27 @@ jobs:
           echo "$contents" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           
-    # - name: PR comment with file
-    #   uses: thollander/actions-comment-pull-request@v3
-    #   env:
-    #      FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
-    #   with:
-    #       message: |
-    #         Second Comment    
-    #         ```
-    #         ${{ env.FILE_CONTENTS }}
-    #         ```
+    - name: PR comment with file
+      uses: thollander/actions-comment-pull-request@v3
+      env:
+         FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
+      with:
+          message: |
+            Second Comment    
+            ```
+            ${{ env.FILE_CONTENTS }}
+            ```
+    - name: PR file to runner location    
+    - uses: actions/checkout@v3
+      with:
+        ref: refs/pull/${{ github.event.inputs.pull_request_number }}/head
+        path: ${{ github.workspace }}/pr-files
+        
+    - name: List files in the pull request
+      run: |
+        echo "Files in the pull request:"
+        ls -l ${{ github.workspace }}/pr-files
+        
     - name: Current location files
       run : |
           ls -la
@@ -148,9 +159,7 @@ jobs:
       run : |
           python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
 
-    # - name: Current location files
-    #   run : |
-    #       ls -la
+
 
           
 
