@@ -77,14 +77,14 @@ jobs:
           echo "| File Contents | $contents |" >> $GITHUB_OUTPUT
           echo "table" >> $GITHUB_OUTPUT
 
-    - name: PR comment with file
-      uses: thollander/actions-comment-pull-request@v3
-      env:
-        FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
-      with:
-         message: |
-            First Comment
-            ${{ steps.read_file.outputs.contents }}
+    # - name: PR comment with file
+    #   uses: thollander/actions-comment-pull-request@v3
+    #   env:
+    #     FILE_CONTENTS: ${{ steps.read_file.outputs.contents }}
+    #   with:
+    #      message: |
+    #         First Comment
+    #         ${{ steps.read_file.outputs.contents }}
       
 
          
@@ -131,16 +131,16 @@ jobs:
           echo "$contents" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           
-    - name: PR comment with file
-      uses: thollander/actions-comment-pull-request@v3
-      env:
-         FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
-      with:
-          message: |
-            Second Comment    
-            ```
-            ${{ env.FILE_CONTENTS }}
-            ```
+    # - name: PR comment with file
+    #   uses: thollander/actions-comment-pull-request@v3
+    #   env:
+    #      FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
+    #   with:
+    #       message: |
+    #         Second Comment    
+    #         ```
+    #         ${{ env.FILE_CONTENTS }}
+    #         ```
       # - name: Current location files
       #   run : |
       #     ls -la
