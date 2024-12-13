@@ -6,7 +6,6 @@ on:
       pull_request_branch:
         description: 'Pull Request Branch'
         required: true
-        type: main
 
 jobs:
 
