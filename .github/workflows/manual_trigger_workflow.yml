@@ -170,9 +170,7 @@ jobs:
       run : |
           python fetch_file_name.py --input-file ${{ github.workspace }}/changed_files.txt
 
-
-
-          
+  
 
     - name: Print pull request number
       run: |
