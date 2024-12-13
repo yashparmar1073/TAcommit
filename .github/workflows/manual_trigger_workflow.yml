@@ -150,6 +150,11 @@ jobs:
       run: |
         echo "Files in the pull request:"
         ls -l ${{ github.workspace }}/pr-files
+
+    - name : copy file from PR TO Work directory 
+      run: |
+         cp ${{ github.workspace }}/pr-files ${{ github.workspace }}/
+      
         
     - name: Current location files
       run : |
