@@ -1,5 +1,5 @@
 do './Shared/cop/shared_regex_file.pl';
-return {
+return{
     name        => 'yash',
     category    => 'RED',
     keywords    => [],
