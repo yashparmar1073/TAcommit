@@ -148,6 +148,11 @@ jobs:
     #         ```
     #         ${{ env.FILE_CONTENTS }}
     #         ```
+    - name: Print comment in table form
+      run: |
+          echo "| Comment |"
+          echo "| --- |"
+          echo "| ${{ github.event.inputs.pull_request_branch }} |"
     
     - name: PR file to runner location    
       uses: actions/checkout@v3
