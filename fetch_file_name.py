@@ -46,6 +46,7 @@ for file in file_name_array:
     output = output.strip()  
     file = file.strip()
     #added / after the output to give proper path
+    #pr-files is added bcz our Pull request  files are present at the ${{ github.workspace }}/pr-files/ location
     file_path = f'{output}/pr-files/{file}'
     with open(file_path, 'r') as f:
         file_data = f.read()
