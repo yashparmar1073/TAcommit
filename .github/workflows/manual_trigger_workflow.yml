@@ -133,22 +133,22 @@ jobs:
     - name: Read file contents
       id: read_second_file
       run: |
-          contents=$(cat ${{ github.workspace }}/changed_files.txt)
-          echo "contents<<EOF" >> $GITHUB_OUTPUT
-          echo "$contents" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          
+        contents=$(cat ${{ github.workspace }}/changed_files.txt)
+        echo "contents<<EOF" >> $GITHUB_OUTPUT
+        echo "$contents" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
     - name: PR comment with file
       uses: peter-evans/create-or-update-comment@v1
       with:
-          issue-number: ${{ github.event.inputs.pull_request_number }}
-          body: |
-            Second Comment    
-            ```
-            ${{ env.steps.read_second_file.outputs.contents }}
-            ```
-          # environmental-file: |
-          #    FILE_CONTENTS: ${{ steps.read_second_file.outputs.contents }}
+        issue-number: ${{ github.event.inputs.pull_request_number }}
+        body: |
+          Second Comment    
+          ```
+          ${{ steps.read_second_file.outputs.contents }}
+          ```
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
          
