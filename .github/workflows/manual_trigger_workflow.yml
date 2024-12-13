@@ -155,7 +155,8 @@ jobs:
       with:
         ref: refs/pull/${{ github.event.inputs.pull_request_number }}/head
         path: ${{ github.workspace }}/pr-files
-        
+
+    # this location is used to find the file in the fetch_file_name.py    
     - name: List files in the pull request
       run: |
         echo "Files in the pull request:"
