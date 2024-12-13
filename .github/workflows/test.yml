@@ -54,9 +54,9 @@ jobs:
     
      
             
-      #clone this repo
-      - name: Checkout
-        uses: actions/checkout@v4.1.6
+      # #clone this repo
+      # - name: Checkout
+      #   uses: actions/checkout@v4.1.6
 
        #next two steps are for the print file in comment 
       - name: Read file contents
