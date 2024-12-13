@@ -47,9 +47,7 @@ jobs:
         message: |
            Hi This Side Yash Parmar
     
-      # - name: Print Files before checkout
-      #   run : |
-      #    ls -la
+    
       # - name: Print working directory
       #   run : |
       #     echo ${{ github.workspace }}
