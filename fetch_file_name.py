@@ -46,7 +46,7 @@ for file in file_name_array:
     output = output.strip()  
     file = file.strip()
     #added / after the output to give proper path
-    file_path = f'{output}/{file}'
+    file_path = f'{output}/pr-files/{file}'
     with open(file_path, 'r') as f:
         file_data = f.read()
         
