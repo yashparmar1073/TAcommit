@@ -17,20 +17,23 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-    
+      with:
+         ref: refs/pull/${{ github.event.inputs.pull_request_number }}/head
+
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v45
       with:
-        files: |
-          *.manuscript
-          
-    - name: Test changed files
+          files: |
+            *.manuscript
+
+    - name: List all changed manuscripts
+      env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
       run: |
-        echo "Changed files:"
-        echo "${{ steps.changed-files.outputs.all_changed_files }}"
-        # Add your testing steps here
-    
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
     - name: Current location with pwd
       run : |
           pwd 
