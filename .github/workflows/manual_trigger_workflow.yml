@@ -6,6 +6,9 @@ on:
       pull_request_branch:
         description: 'Pull Request Branch'
         required: true
+      verison: 
+        description: 'Specify version to run Testplan'
+        required: true
 
 jobs:
 
