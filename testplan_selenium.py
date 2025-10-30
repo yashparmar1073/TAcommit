@@ -3,10 +3,10 @@ import sys
 import os
 import argparse
 # ============================================================================
-# Command :- python3 selenium.py -b RELEASE#staging/v22.0.Dev.020.Bonaire -v 22_0_0_335 -t testcase.txt  -u <username> -p <password>
+# Command :- python3 selenium.py -b RELEASE#staging/v22.0.Dev.020.Bonaire -v 22_0_0_335 -f testcase.txt -t "Team Bhaskar"  -u <username> -p <password>
 # ============================================================================
 # ============================================================================
-# CRITICAL FIX: Prevent local testplan_selenium.py from being imported
+# CRITICAL FIX: Prevent local selenium.py from being imported
 # ============================================================================
 print("="*80)
 print("[SETUP] Fixing import conflicts...")
@@ -34,16 +34,18 @@ print("[SETUP] Parsing command-line arguments...")
 print("="*80)
 
 parser = argparse.ArgumentParser(description='Selenium Testplan Management Script')
-parser.add_argument('-b', '--branch', type=str, required=False, 
+parser.add_argument('-b', '--branch', type=str, required=True, 
                     help='Branch name (e.g., "RELEASE#20.0.Maint.060.Apataki")')
-parser.add_argument('-v', '--version', type=str, required=False,
-                    help='Software version')
-parser.add_argument('-t', '--testcases', type=str, required=False,
+parser.add_argument('-v', '--version', type=str, required=True,
+                    help='Software version' '(e.g., "22_0_0_335")')
+parser.add_argument('-f', '--testcases', type=str, required=True,
                     help='Path to testcases file')
-parser.add_argument('-u', '--username', type=str, required=False,
+parser.add_argument('-u', '--username', type=str, required=True,
                     help='Username for login')
-parser.add_argument('-p', '--password', type=str, required=False,
+parser.add_argument('-p', '--password', type=str, required=True,
                     help='Password for login')
+parser.add_argument('-t', '--teamname', type=str, required=True,
+                    help='Testplan Team Name (e.g., "Team Bhaskar")')
 
 args = parser.parse_args()
 
@@ -54,6 +56,8 @@ if args.version:
     print(f"  - Version: {args.version}")
 if args.testcases:
     print(f"  - Testcases file: {args.testcases}")
+if args.teamname:
+    print(f"  - Team name: {args.teamname}")    
 if args.username:
     print(f"  - Username: {args.username}")
 if args.password:
@@ -200,7 +204,7 @@ try:
     # ============================================================================
     print("\n[STEP 5] Selecting Team Bhaskar testplan...")
     
-    testplan_name = "Team Bhaskar"
+    testplan_name = args.teamname  # e.g., "Team Bhaskar"
     print(f"  - Finding '{testplan_name}' testplan...")
     open_testplan = wait.until(EC.presence_of_element_located((By.XPATH, '//td[@class="l"]/a[text()="' + testplan_name + '"]')))
     print(f"  ✅ '{testplan_name}' testplan found")
