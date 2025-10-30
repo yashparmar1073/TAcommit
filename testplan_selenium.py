@@ -2,9 +2,11 @@ import subprocess
 import sys
 import os
 import argparse
-
 # ============================================================================
-# CRITICAL FIX: Prevent local selenium.py from being imported
+# Command :- python3 selenium.py -b RELEASE#staging/v22.0.Dev.020.Bonaire -v 22_0_0_335 -t testcase.txt  -u <username> -p <password>
+# ============================================================================
+# ============================================================================
+# CRITICAL FIX: Prevent local testplan_selenium.py from being imported
 # ============================================================================
 print("="*80)
 print("[SETUP] Fixing import conflicts...")
