@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Step 1: Fetch all .manuscript filenames
+      # Step 1: Get manuscript filenames
       - name: Fetch manuscript filenames
         env:
           GH_TOKEN: ${{ github.token }}
@@ -24,7 +24,7 @@ jobs:
           echo "Manuscript files found:"
           cat manuscript.txt || echo "No manuscripts found."
 
-      # Step 2: Fetch content using Contents API
+      # Step 2: Fetch content using raw_url (works for newly added files)
       - name: Print manuscript contents
         env:
           GH_TOKEN: ${{ github.token }}
@@ -34,10 +34,16 @@ jobs:
 
             echo "=== Content of $file ==="
 
-            # Fetch content from PR head branch
-            gh api "repos/${{ github.repository }}/contents/$file" \
-              --field ref=refs/pull/${{ github.event.pull_request.number }}/head \
-              --jq '.content' | base64 --decode
+            # Get raw_url
+            raw_url=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+              --jq ".[] | select(.filename==\"$file\") | .raw_url" | tr -d '"')
+
+            # Fetch content
+            if [ -n "$raw_url" ]; then
+              curl -H "Authorization: token $GH_TOKEN" -s "$raw_url"
+            else
+              echo "[Raw URL not found for this file]"
+            fi
 
             echo ""
             echo "=============================="
