@@ -112,9 +112,11 @@ jobs:
               --jq ".[] | select(.filename==\"$file\") | .patch" \
               | sed 's/^+//')
 
-            # Extract category and name (single or double quotes)
-            category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
-            name=$(echo "$content" | grep -E "name[ ]*=>[ ]*['\"].*['\"]" | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
+            # Extract category and name (single or double quotes) and trim spaces
+            category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" \
+                      | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/" | xargs)
+            name=$(echo "$content" | grep -E "name[ ]*=>[ ]*['\"].*['\"]" \
+                   | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/" | xargs)
 
             # Map team from category
             team="${team_data[$category]}"
@@ -127,7 +129,7 @@ jobs:
             echo "Team: $team"
 
             # Send POST request
-            curl -X POST "$url" \
+            response=$(curl -s -X POST "$url" \
               -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8" \
               -H "Accept-Language: en-US,en;q=0.5" \
               -H "Accept-Encoding: gzip, deflate, br, zstd" \
@@ -150,86 +152,10 @@ jobs:
               -d "team=$team" \
               -d "effort=0" \
               -d "notes=" \
-              -d "OK=OK"
+              -d "OK=OK")
 
+            echo "Server Response: $response"
             echo "=============================="
             echo ""
 
           done < manuscript.txt
-
-# name: Fetch Manuscripts and Extract Fields
-
-# on:
-#   pull_request:
-
-# jobs:
-#   parse-manuscripts:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - uses: actions/checkout@v4
-
-#       # Step 1: Fetch manuscript filenames
-#       - name: Fetch manuscript filenames
-#         env:
-#           GH_TOKEN: ${{ github.token }}
-#         run: |
-#           gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
-#             --jq '.[] | select(.filename | endswith(".manuscript")) | .filename' \
-#             > manuscript.txt || echo ""
-
-#       - name: Show manuscript filenames
-#         run: |
-#           echo "Manuscript files found:"
-#           cat manuscript.txt || echo "No manuscripts found."
-
-#       # Step 2: Print content and extract name & category
-#       # - name: Extract name and category
-#       #   env:
-#       #     GH_TOKEN: ${{ github.token }}
-#       #   run: |
-#       #     while IFS= read -r file; do
-#       #       [ -z "$file" ] && continue
-
-#       #       echo "=== Processing $file ==="
-
-#       #       # Get patch for this file and strip leading '+'
-#       #       content=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
-#       #         --jq ".[] | select(.filename==\"$file\") | .patch" \
-#       #         | sed 's/^+//')
-
-#       #       # echo "Full content:"
-#       #       # echo "$content"
-#       #       # echo ""
-
-#       #       # Extract category (single or double quotes)
-#       #       category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
-
-#       #       # Extract name (single or double quotes)
-#       #       name=$(echo "$content" | grep -E "name[ ]*=>[ ]*['\"].*['\"]" | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
-
-#       #       echo "Extracted fields:"
-#       #       echo "Name: $name"
-#       #       echo "Category: $category"
-#       #       echo "=============================="
-#       #       echo ""
-#       #     done < manuscript.txt
-
-#       - name: Send name and category via curl
-#         run: |
-#           while IFS= read -r file; do
-#             [ -z "$file" ] && continue
-      
-#             content=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
-#               --jq ".[] | select(.filename==\"$file\") | .patch" \
-#               | sed 's/^+//')
-      
-#             category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
-#             name=$(echo "$content" | grep -E "name[ ]*=>[ ]*['\"].*['\"]" | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
-      
-#             echo "Sending $name and $category to API..."
-      
-#             curl -X POST "https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management" \
-#                  -H "Content-Type: application/json" \
-#                  -d "{\"name\": \"$name\", \"category\": \"$category\"}"
-#           done < manuscript.txt
