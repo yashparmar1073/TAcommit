@@ -61,5 +61,5 @@ jobs:
             print(f"Category: {category}")
             EOF 
             
-          echo ""
+            echo ""
           done < manuscript.txt
