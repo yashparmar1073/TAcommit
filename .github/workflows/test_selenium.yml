@@ -14,15 +14,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}   # REQUIRED for gh CLI
         run: |
-         gh api \
+          gh api \
+            repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
             --jq '.[] 
-            | select(.status == "added" 
-               and (.filename? // "" | endswith(".manuscript"))) 
-            | .filename'
- 
+              | select(.status == "added"
+                and (.filename? // "" | endswith(".manuscript"))) 
+              | .filename' \
+            > manuscripts.txt
 
       - name: Show manuscript file names
-        run: cat manuscripts.txt
+        run: |
+          echo "Found manuscript files:"
+          cat manuscripts.txt
 
       - name: Fetch manuscript content
         env:
@@ -30,8 +33,10 @@ jobs:
         run: |
           while read file; do
             echo "=== $file ==="
-            gh api repos/yashparmar1073/TAcommit/contents/$file \
-              --field ref=refs/pull/2/head \
-              --jq '.content' | base64 --decode
+            gh api \
+              repos/${{ github.repository }}/contents/$file \
+              --field ref=refs/pull/${{ github.event.pull_request.number }}/head \
+              --jq '.content' \
+            | base64 --decode
             echo
           done < manuscripts.txt
