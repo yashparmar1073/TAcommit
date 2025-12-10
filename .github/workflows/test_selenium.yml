@@ -1,47 +1,30 @@
-name: Get New Manuscript Files
+name: Fetch PR Manuscripts
 
 on:
   pull_request:
-    types: [opened, synchronize]
 
 jobs:
-  list-new-files:
+  fetch-files:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ github.token }}
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Install GitHub CLI
-        uses: cli/cli@v3
-
-      - name: Run gh command
+      - name: Get added manuscript file URLs
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh repo view ${{ github.repository }}
-          
-      - name: Fetch PR files
-        run: |
-          gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-            --jq '.[] | select(.status == "added") | .filename' > manuscripts.txt
+          gh api \
+            repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
+            --jq '.[] | select(.status=="added" and .filename | endswith(".manuscript")) | .raw_url' \
+            > manuscript_urls.txt
 
-      - name: Filter .manuscript files
-        run: |
-          grep "\.manuscript$" manuscripts.txt || true
-
-      - name: Get added manuscript files
-        run: |
-          gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-          --jq '.[] | select(.status=="added" and .filename | endswith(".manuscript")) | .raw_url' > urls.txt
-
-      - name: Print content
+      - name: Print manuscript file contents
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           while read url; do
-           echo "=== $url ==="
-           curl -H "Authorization: token $GITHUB_TOKEN" "$url"
-           echo
-          done < urls.txt
+            echo "=== $url ==="
+            curl -H "Authorization: token $GH_TOKEN" "$url"
+            echo
+          done < manuscript_urls.txt
