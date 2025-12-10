@@ -15,9 +15,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}   # REQUIRED for gh CLI
         run: |
          gh api \
-          repos/yashparmar1073/TAcommit/pulls/2/files \
-          --jq '.[] | select(.status == "added" and (.filename? | tostring | endswith(".manuscript"))) | .filename' \
-          > manuscripts.txt
+             repos/yashparmar1073/TAcommit/pulls/2/files \
+              --jq '.[] | select(.status == "added" and (.filename? | tostring | endswith(".manuscript"))) | .filename' \
+              > manuscripts.txt
  
 
       - name: Show manuscript file names
