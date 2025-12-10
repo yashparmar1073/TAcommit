@@ -1,0 +1,36 @@
+name: Get New Manuscript Files
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  list-new-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch PR files
+        run: |
+          gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
+            --jq '.[] | select(.status == "added") | .filename' > manuscripts.txt
+
+      - name: Filter .manuscript files
+        run: |
+          grep "\.manuscript$" manuscripts.txt || true
+
+      - name: Get added manuscript files
+        run: |
+          gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
+          --jq '.[] | select(.status=="added" and .filename | endswith(".manuscript")) | .raw_url' > urls.txt
+
+      - name: Print content
+        run: |
+          while read url; do
+           echo "=== $url ==="
+           curl -H "Authorization: token $GITHUB_TOKEN" "$url"
+           echo
+          done < urls.txt
