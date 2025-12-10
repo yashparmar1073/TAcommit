@@ -41,4 +41,4 @@ jobs:
               --jq '.[] | select(.filename=="'"$file"'") | .raw_url' | tr -d '"')
             
             # Fetch and print content
-            curl -H "Authorization: token $GH_TOKEN" -s "$raw_url"
+             curl -H "Authorization: token $GH_TOKEN" -s "$raw_url"
