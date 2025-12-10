@@ -1,30 +1,35 @@
-name: Fetch PR Manuscripts
+name: Fetch Manuscripts
 
 on:
   pull_request:
 
 jobs:
-  fetch-files:
+  get-manuscripts:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get added manuscript file URLs
+      - name: Fetch added .manuscript files
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}   # REQUIRED for gh CLI
         run: |
           gh api \
-            repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-            --jq '.[] | select(.status=="added" and .filename | endswith(".manuscript")) | .raw_url' \
-            > manuscript_urls.txt
+            repos/yashparmar1073/TAcommit/pulls/2/files \
+            --jq '.[] | select(.status == "added" and .filename | endswith(".manuscript")) | .filename' \
+            > manuscripts.txt
 
-      - name: Print manuscript file contents
+      - name: Show manuscript file names
+        run: cat manuscripts.txt
+
+      - name: Fetch manuscript content
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          while read url; do
-            echo "=== $url ==="
-            curl -H "Authorization: token $GH_TOKEN" "$url"
+          while read file; do
+            echo "=== $file ==="
+            gh api repos/yashparmar1073/TAcommit/contents/$file \
+              --field ref=refs/pull/2/head \
+              --jq '.content' | base64 --decode
             echo
-          done < manuscript_urls.txt
+          done < manuscripts.txt
