@@ -32,18 +32,22 @@ jobs:
         run: |
           while read file; do
             echo "=== Processing $file ==="
-            # Get the raw_url for this file from the PR files list
+      
+            # Get raw_url for the file in PR
             raw_url=$(gh api \
               repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
               --jq ".[] | select(.filename==\"$file\") | .raw_url")
-            # Fetch file content directly from raw_url
+      
+            # Fetch content from raw_url
             content=$(curl -H "Authorization: token $GH_TOKEN" -s "$raw_url")
+      
             echo "$content" > temp.manuscript
-            # Extract fields
-            name=$(grep -E '^name\s*=>' temp.manuscript | sed -E 's/name\s*=>\s*"([^"]*)".*/\1/')
-            category=$(grep -E '^category\s*=>' temp.manuscript | sed -E 's/category\s*=>\s*"([^"]*)".*/\1/')
+      
+            # Extract name and category (handles single or double quotes)
+            name=$(grep -E '^name\s*=>' temp.manuscript | sed -E 's/name\s*=>\s*["'"'"']([^"'"'"']*)["'"'"'].*/\1/')
+            category=$(grep -E '^category\s*=>' temp.manuscript | sed -E 's/category\s*=>\s*["'"'"']([^"'"'"']*)["'"'"'].*/\1/')
+      
             echo "Name: $name"
             echo "Category: $category"
             echo ""
           done < manuscript.txt
-  
