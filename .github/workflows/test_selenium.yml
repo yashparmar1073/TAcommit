@@ -112,11 +112,13 @@ jobs:
               --jq ".[] | select(.filename==\"$file\") | .patch" \
               | sed 's/^+//')
 
-            # Extract category and name (single or double quotes) and trim spaces
+            # Extract category and trim spaces (single or double quotes)
             category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" \
                       | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/" | xargs)
+
+            # Extract name (single or double quotes), keep spaces intact
             name=$(echo "$content" | grep -E "name[ ]*=>[ ]*['\"].*['\"]" \
-                   | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/" | xargs)
+                   | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
 
             # Map team from category
             team="${team_data[$category]}"
