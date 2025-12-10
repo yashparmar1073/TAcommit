@@ -60,6 +60,4 @@ jobs:
             print(f"Name: {name}")
             print(f"Category: {category}")
             EOF 
-            
-            echo ""
           done < manuscript.txt
