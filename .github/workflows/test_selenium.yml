@@ -1,19 +1,19 @@
-name: Fetch Manuscript Files
+name: Fetch Manuscripts
 
 on:
   pull_request:
 
 jobs:
-  list-pr-manuscripts:
+  parse-manuscripts:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Fetch only .manuscript files from the PR
+      # Step 1: Fetch .manuscript files
+      - name: Fetch manuscript filenames
         env:
-          GH_TOKEN: ${{ github.token }}   # Required for gh CLI
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api \
             repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
@@ -22,7 +22,30 @@ jobs:
               | .filename' \
             > manuscript.txt
 
-      - name: Print all .manuscript filenames
+      - name: Show manuscript filenames
+        run: cat manuscript.txt
+
+      # Step 2: Fetch content of each manuscript & extract fields
+      - name: Fetch manuscript content and extract fields
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "Manuscript files in this PR:"
-          cat manuscript.txt || echo "No manuscript files found."
+          while read file; do
+            echo "=== Processing $file ==="
+
+            # Fetch raw content of the file from PR branch
+            content=$(gh api \
+              repos/${{ github.repository }}/contents/$file \
+              --field ref=refs/pull/${{ github.event.pull_request.number }}/head \
+              --jq '.content' | base64 --decode)
+
+            echo "$content" > temp.manuscript
+
+            # Extract fields formatted like:  name => "ABC",
+            name=$(grep -E '^name\s*=>' temp.manuscript | sed -E 's/name\s*=>\s*"([^"]*)".*/\1/')
+            category=$(grep -E '^category\s*=>' temp.manuscript | sed -E 's/category\s*=>\s*"([^"]*)".*/\1/')
+
+            echo "Name: $name"
+            echo "Category: $category"
+            echo ""
+          done < manuscript.txt
