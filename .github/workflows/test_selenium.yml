@@ -1,58 +1,28 @@
-name: Fetch PR Files
+name: Fetch Manuscript Files
 
 on:
   pull_request:
 
 jobs:
-  list-pr-files:
+  list-pr-manuscripts:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Fetch all files from the PR
+      - name: Fetch only .manuscript files from the PR
         env:
           GH_TOKEN: ${{ github.token }}   # Required for gh CLI
         run: |
           gh api \
             repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-            --jq '.[].filename' \
+            --jq '.[] 
+              | select(.filename | endswith(".manuscript")) 
+              | .filename' \
             > manuscript.txt
 
-      - name: Print all fetched filenames
+      - name: Print all .manuscript filenames
         run: |
-          echo "Files changed in PR:"
-          cat manuscript.txt
-
-      # - name: Fetch added .manuscript files
-      #   env:
-      #     GH_TOKEN: ${{ github.token }}
-      #   run: |
-      #     gh api \
-      #     repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-      #     --jq '.[] 
-      #       | select(.status == "added" 
-      #                and (.filename | type == "string" and endswith(".manuscript"))) 
-      #       | .filename' \
-      #       > manuscripts.txt
-
-
-      # - name: Show manuscript file names
-      #   run: |
-      #     echo "Found manuscript files:"
-      #     cat manuscripts.txt
-
-      # - name: Fetch manuscript content
-      #   env:
-      #     GH_TOKEN: ${{ github.token }}
-      #   run: |
-      #     while read file; do
-      #       echo "=== $file ==="
-      #       gh api \
-      #         repos/${{ github.repository }}/contents/$file \
-      #         --field ref=refs/pull/${{ github.event.pull_request.number }}/head \
-      #         --jq '.content' \
-      #       | base64 --decode
-      #       echo
-      #     done < manuscripts.txt
+          echo "Manuscript files in this PR:"
+          cat manuscript.txt || echo "No manuscript files found."
