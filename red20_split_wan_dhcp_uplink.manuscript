@@ -1,0 +1,329 @@
+return{
+    name     => 'red20_split_wan_dhcp_uplink', 
+    category => ' RED',
+    keywords => [
+        'XGS',
+        'Product Test Suite',
+        'Team Vivaldi',
+        'Route Mode',
+        'Priority Medium'
+    ],
+    description =>
+        'Standard-split mode test using WAN (dhcp) on RED20:<br><br>'
+        . '1. Setup RED20 in split mode using dhcp<br>'
+        . '2. Device should connect via WAN1<br>'
+        . '3. Unplug WAN1, Device should disconnect from appliance<br>'
+        . '4. Replug WAN1, Device should connect via WAN1',
+
+    archive    => 1,
+    lease_vlan => 2,
+    backup     => [ '/log/red.log', ],
+    duration   => 60,
+
+    actors => {
+        appliance => {
+            sw_os   => 'COP',
+            is_dut  => '1',
+            groups  => [ 'Wireless' ],
+            install => {
+                groups => [ 'Wireless' ],
+            },
+            hw_type =>
+                '^(XG|XGS)(106W|107W|115W|116W|125W|126W|135W|136W).*$',
+            nics => {
+                eth1 => {
+                    untag => 'NET-TA-1',    # WAN
+                },
+            },
+        },
+
+        gw_appliance => {
+            sw_os => 'COP',
+            nics  => {
+                eth1 => {
+                    untag => 'LEASED_1',
+                },
+            },
+        },
+
+    },
+
+    resources => {
+        red => {
+            hw_type => '^(RED20|RED60).*$',
+            groups  => [ 'RED/WIFI' ],
+            nics    => {
+                eth1 => {
+                    untag => 'LEASED_1',    ## connection to WAN gw_appliance
+                },
+            },
+        },
+    },
+
+    steps => [
+
+        # step 1
+        # Test : Temporary step to copy ta-tools file
+        [
+            appliance => {
+                file => 'Shared/shell_command.t',
+                params =>
+                    '--cmd "cp /opt/ta_testcase/Wireless.pm /opt/TA/lib/TA/Cfg/Net/"',
+            },
+        ],
+
+        # step 2
+        ## Empty /log/red-*/ log files
+        [
+            appliance => {
+                file   => '../../Shared/exec_cmd.t',
+                params => '--cmd="rm -rf /log/red-*.log"'
+            }
+        ],
+
+        # step 3
+        [
+            appliance => {
+                file   => '../../DHCP/cop/cfg_dhcp_server.t',
+                params => '--arm',
+            },
+            gw_appliance => {
+                file   => '../../DHCP/cop/cfg_dhcp_server.t',
+                params => '--arm',
+            },
+        ],
+
+        # step 4
+        [
+            appliance => {
+                file   => '../../Shared/syslogwatcher.t',
+                params => '--session red_kernel --start'
+            }
+        ],
+
+        ######################## Setup Test ####################################
+
+        # step 5
+        [
+            appliance => {
+                file   => '../cop/cfg_global_settings.t',
+                params => '--enable',
+            },
+        ],
+
+        # step 6
+        [
+            appliance => {
+                file   => '../cop/cfg_global_settings.t',
+                params => '--use_unified_firmware',
+            },
+        ],
+
+        # step 7
+        # setup eth1 on gateway for RED WAN1
+        [
+            gw_appliance => {
+                file   => '../../Network/cop/cfg_static_interface.t',
+                params => '--name eth1 --edit --ipv4 LEASED_1 --zone LAN',
+            },
+        ],
+
+        # step 8
+        [
+            appliance => {
+                file   => '../../Network/cop/cfg_static_interface.t',
+                params => '--name eth1 --edit --ipv4 NET-TA-1 --zone LAN',
+            },
+        ],
+
+        # step 9
+        # setup DHCP server for WAN1 on RED
+        [
+            gw_appliance => {
+                file => '../../DHCP/cop/cfg_dhcp_server.t',
+                params =>
+                    '--add --interface=eth1 --vlan LEASED_1 --name=WAN1 --version=4',
+            },
+        ],
+
+        # step 10
+        ## Create default nat policy for default masq
+        [
+            gw_appliance => {
+                file   => '../../Firewall/cop/cfg_nat_rule.t',
+                params => '--create --name default_nat --trans-source MASQ',
+            },
+            appliance => {
+                file   => '../../Firewall/cop/cfg_nat_rule.t',
+                params => '--create --name default_nat --trans-source MASQ',
+            },
+        ],
+
+        # step 11
+        [
+            gw_appliance => {
+                file => '../../Firewall/cop/cfg_firewall_rule.t',
+                params =>
+                    '--create --netpolicy --name policy --position top --szone Any --dzone Any',
+            },
+            appliance => {
+                file => '../../Firewall/cop/cfg_firewall_rule.t',
+                params =>
+                    '--create --netpolicy --name policy --position top --szone Any --dzone Any',
+            },
+        ],
+
+        # step 12
+        # create lan type custom zone
+        [
+            appliance => {
+                file => '../../Network/cop/cfg_zone.t',
+                params =>
+                    '--create custom_zone --description "This is a custom zone of LAN type" --zonetype lan --service https --service ping --service dns --service ssh --service red --service radius_sso --service wireless_prot',
+            }
+        ],
+
+        # step 13
+        [
+            appliance => {
+                file => '../../Wireless/cop/cfg_wireless_protection.t',
+                params =>
+                    '--enable --allowed-zone LAN --allowed-zone WiFi --allowed-zone DMZ --allowed-zone VPN --allowed-zone custom_zone',
+            },
+        ],
+
+        # step 14
+        # create host to test split network (www.spiegel.de)
+        [   
+            appliance => {
+                file => '../../Network/cop/cfg_network_object.t',
+                params =>
+                    '--create --name red_split_network --ip-host 128.65.210.180',
+            },
+        ],
+
+        ######################## Setup RED device using WAN1 ####################
+
+        # step 15
+        [
+            appliance => {
+                file   => '../../Shared/syslogwatcher.t',
+                params => '--start --session red_online'
+            },
+        ],
+
+        # step 16
+        [
+            appliance => {
+                file => '../cop/cfg_red.t',
+                params =>
+                    '--add --branchname red --vlan LEASED_0 --hub-hostname appliance:NET-TA-1 --route-mode split --split-network red_split_network --ressource red',
+            },
+        ],
+
+        # step 17
+        [
+            appliance => {
+                file   => 'Shared/syslogwatcher.t',
+                params => '--session redapx_online --start'
+            }
+        ],
+
+        # step 18
+        [
+            appliance => {
+                file   => '../../Shared/power_cycle.t',
+                params => '--system red',
+            },
+        ],
+
+        # step 19
+        [
+            appliance => {
+                file => '../unifiedfw/tools/check_log.t',
+                params =>
+                    '--resource red --type wait_for_up --uplink WAN1 --session red_online --vlan LEASED_0 --firstconfig 1'
+            }
+        ],
+
+        ####################################################################################################
+        # Setup Test for wireless
+        ####################################################################################################
+
+        # step 20
+        [
+            appliance => {
+                file => '../../Wireless/tools/chk_log.t',
+                params =>
+                    '--resource red --type wait_for_pending --session redapx_online'
+            }
+        ],
+
+        # step 21
+        # accept red from pending access point
+        [
+            appliance => {
+                file   => '../cop/accept_red.t',
+                params => '--resource red',
+            },
+        ],
+
+        # step 22
+        [
+            appliance => {
+                file => '../unifiedfw/tools/check_log.t',
+                params =>
+                    '--resource red --type wait_for_up --uplink WAN1 --session redapx_online '
+            },
+        ],
+
+        # step 23
+        [
+            appliance => {
+                file => '../../Wireless/tools/chk_log.t',
+                params =>
+                    '--resource red --type wait_for_active --session redapx_online'
+            }
+        ],
+
+        # step 24
+        [
+            appliance => {
+                file => '../../Wireless/cop/cfg_wireless_networks.t',
+                params =>
+                    '--add --name w2p_sz_1 --hw w2p_sz_1 --passphrase 1234567890 --security-mode wpa2_personal --type none --zone WiFi --testregistry-key mynetwork1',
+            },
+        ],
+
+        # step 25
+        [
+            appliance => {
+                file => '../../Wireless/cop/cfg_wireless_networks.t',
+                params =>
+                    '--add --name w2p_b2a_2 --hw w2p_b2a_2 --passphrase 1234567890 --security-mode wpa2_personal --type lan  --testregistry-key mynetwork2',
+            },
+        ],
+
+        # step 26
+        #this step is change in our case
+        #we have to add red here
+        [
+            appliance => {
+                file => '../../Wireless/cop/assign_wireless_network.t',
+                params =>
+                    '--resource red --networks w2p_sz_1 --networks w2p_b2a_2 ',
+            },
+        ],
+
+        ######################## Done ##########################################
+
+        # step 27
+        [
+            appliance => {
+                file   => '../cop/checklog_kernel.t',
+                params => '--session red_kernel'
+            },
+        ]
+
+    ],
+};
