@@ -8,39 +8,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 0: Checkout repository (needed for GH CLI)
       - uses: actions/checkout@v4
 
-      # Step 1: Fetch all .manuscript filenames from the PR
+      # Step 1: Fetch manuscript filenames
       - name: Fetch manuscript filenames
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
             --jq '.[] | select(.filename | endswith(".manuscript")) | .filename' \
-            -q > manuscript.txt || echo ""  # Ensure the file exists even if no manuscripts
+            > manuscript.txt || echo ""
 
       - name: Show manuscript filenames
         run: |
           echo "Manuscript files found:"
           cat manuscript.txt || echo "No manuscripts found."
 
-      # Step 2: Fetch content and print each manuscript
+      # Step 2: Fetch content from raw_url
       - name: Print manuscript contents
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           while IFS= read -r file; do
-            # Skip empty lines
             [ -z "$file" ] && continue
 
             echo "=== Content of $file ==="
 
-            # Fetch the raw content directly from the PR head branch
-            curl -s -H "Authorization: token $GH_TOKEN" \
-                 -H "Accept: application/vnd.github.v3.raw" \
-                 -L \
-                 "https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=refs/pull/${{ github.event.pull_request.number }}/head"
+            # Get raw_url from PR files API
+            raw_url=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+              --jq -r ".[] | select(.filename==\"$file\") | .raw_url")
+
+            # Fetch content using raw_url
+            curl -H "Authorization: token $GH_TOKEN" -s "$raw_url"
 
             echo ""
             echo "=============================="
