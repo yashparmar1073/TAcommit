@@ -39,15 +39,15 @@ jobs:
               --jq ".[] | select(.filename==\"$file\") | .patch" \
               | sed 's/^+//')
 
-            echo "Full content:"
-            echo "$content"
-            echo ""
+            # echo "Full content:"
+            # echo "$content"
+            # echo ""
 
-            # Extract category (single quotes)
-            category=$(echo "$content" | grep -E "category[ ]*=>[ ]*'.*'" | sed -E "s/.*=>[ ]*'([^']+)'.*/\1/")
+            # Extract category (single or double quotes)
+            category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
 
-            # Extract name (single quotes)
-            name=$(echo "$content" | grep -E "name[ ]*=>[ ]*'.*'" | sed -E "s/.*=>[ ]*'([^']+)'.*/\1/")
+            # Extract name (single or double quotes)
+            name=$(echo "$content" | grep -E "name[ ]*=>[ ]*['\"].*['\"]" | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
 
             echo "Extracted fields:"
             echo "Name: $name"
