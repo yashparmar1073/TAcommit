@@ -22,14 +22,11 @@ jobs:
       - name: Show manuscript file names
         run: cat manuscripts.txt
 
-      - name: Fetch manuscript content
+      - name: Fetch added manuscript files
         env:
-          GH_TOKEN: ${{ github.token }}
+         GH_TOKEN: ${{ github.token }}
         run: |
-          while read file; do
-            echo "=== $file ==="
-            gh api repos/yashparmar1073/TAcommit/contents/$file \
-              --field ref=refs/pull/2/head \
-              --jq '.content' | base64 --decode
-            echo
-          done < manuscripts.txt
+         gh api \
+            repos/yashparmar1073/TAcommit/pulls/2/files \
+            --jq '.[] | select(.status == "added" and (.filename | endswith(".manuscript"))) | .filename' \
+            > manuscripts.txt
