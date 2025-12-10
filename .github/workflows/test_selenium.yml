@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 0: Checkout repository (needed for GH CLI)
       - uses: actions/checkout@v4
 
       # Step 1: Fetch manuscript filenames
@@ -16,13 +17,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
-            --jq '.[] | select(.filename | endswith(".manuscript")) | .filename' \
-            > manuscript.txt || echo ""
+            --jq -r '.[] | select(.filename | endswith(".manuscript")) | .filename' \
+            > manuscripts.txt || echo ""
 
       - name: Show manuscript filenames
         run: |
           echo "Manuscript files found:"
-          cat manuscript.txt || echo "No manuscripts found."
+          cat manuscripts.txt || echo "No manuscripts found."
 
       # Step 2: Fetch content from raw_url
       - name: Print manuscript contents
@@ -31,18 +32,22 @@ jobs:
         run: |
           while IFS= read -r file; do
             [ -z "$file" ] && continue
-      
+
             echo "=== Content of $file ==="
-      
-            # Safely get raw_url using gh api
-            raw_url=$(gh api \
-              "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
-              --jq ".[] | select(.filename==\"$file\") | .raw_url" -q | tr -d '"')
-      
-            # Fetch content using raw_url
-            curl -H "Authorization: token $GH_TOKEN" -s "$raw_url"
-      
+
+            # Get raw_url safely
+            raw_url=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+              --jq -r ".[] | select(.filename==\"$file\") | .raw_url")
+
+            if [ -z "$raw_url" ]; then
+              echo "Could not fetch raw_url for $file"
+              continue
+            fi
+
+            # Fetch content
+            curl -s -H "Authorization: token $GH_TOKEN" "$raw_url"
+
             echo ""
             echo "=============================="
             echo ""
-          done < manuscript.txt
+          done < manuscripts.txt
