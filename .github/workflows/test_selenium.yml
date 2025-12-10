@@ -25,28 +25,46 @@ jobs:
       - name: Show manuscript filenames
         run: cat manuscript.txt
 
-      # Step 2: Fetch content of each manuscript & extract fields
-      - name: Fetch manuscript content and extract fields
-        env:
-          GH_TOKEN: ${{ github.token }}
+      # Step 4: Extract name and category using Python
+      - name: Extract name and category
         run: |
-          while read file; do
-            echo "=== Processing $file ==="
-      
-            # Get raw_url for the file in PR
-            raw_url=$(gh api \
-              repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-              --jq ".[] | select(.filename==\"$file\") | .raw_url")
-      
-            # Fetch content from raw_url
-            content=$(curl -H "Authorization: token $GH_TOKEN" -s "$raw_url")
-      
-            echo "$content" > temp.manuscript
-      
-            # Extract name and category (handles single or double quotes)
-            name=$(grep -Po '^name\s*=>\s*["'\'']\K[^"'\''"]+' temp.manuscript)
-            category=$(grep -Po '^category\s*=>\s*["'\'']\K[^"'\''"]+' temp.manuscript)
+          python3 - << 'EOF'
+          import re
+          import base64
+          import subprocess
 
+          # Read manuscript filenames
+          with open("manuscripts.txt") as f:
+              files = [line.strip() for line in f if line.strip()]
+
+          for file in files:
+              print(f"Processing: {file}")
+              
+              # Fetch file content from PR
+              result = subprocess.run([
+                  "gh", "api",
+                  f"repos/${{ github.repository }}/contents/{file}",
+                  "--field", f"ref=refs/pull/${{ github.event.pull_request.number }}/head",
+                  "--jq", ".content"
+              ], capture_output=True, text=True)
+              
+              content_b64 = result.stdout.strip()
+              if not content_b64:
+                  print("  Could not fetch content")
+                  continue
+
+              content = base64.b64decode(content_b64).decode("utf-8")
+
+              # Extract name and category
+              name_match = re.search(r"name\s*=>\s*['\"]([^'\"]+)['\"]", content)
+              category_match = re.search(r"category\s*=>\s*['\"]\s*([^'\"]*?)\s*['\"]", content)
+
+              name = name_match.group(1).strip() if name_match else "N/A"
+              category = category_match.group(1).strip() if category_match else "N/A"
+
+              print(f"  Name: {name}")
+              print(f"  Category: {category}")
+          EOF
       
             echo "Name: $name"
             echo "Category: $category"
