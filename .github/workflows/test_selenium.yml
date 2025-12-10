@@ -1,26 +1,29 @@
-name: Fetch Manuscripts
+name: Fetch PR Files
 
 on:
   pull_request:
 
 jobs:
-  get-manuscripts:
+  list-pr-files:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Debug PR files
+      - name: Fetch all files from the PR
+        env:
+          GH_TOKEN: ${{ github.token }}   # Required for gh CLI
         run: |
           gh api \
-          repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-          | jq '.[] | {filename, status, type: (.filename | type)}' \
-          > manuscripts.txt
+            repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
+            --jq '.[].filename' \
+            > manuscript.txt
 
-      - name: Show manuscript file names
+      - name: Print all fetched filenames
         run: |
-          echo "Found manuscript files:"
-          cat manuscripts.txt
+          echo "Files changed in PR:"
+          cat manuscript.txt
 
       # - name: Fetch added .manuscript files
       #   env:
