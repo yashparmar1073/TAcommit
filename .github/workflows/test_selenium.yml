@@ -1,16 +1,16 @@
-name: Fetch Manuscript Contents
+name: Fetch Manuscripts and Extract Fields
 
 on:
   pull_request:
 
 jobs:
-  fetch-manuscripts:
+  parse-manuscripts:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      # Step 1: Fetch all .manuscript filenames in the PR
+      # Step 1: Fetch manuscript filenames
       - name: Fetch manuscript filenames
         env:
           GH_TOKEN: ${{ github.token }}
@@ -24,22 +24,34 @@ jobs:
           echo "Manuscript files found:"
           cat manuscript.txt || echo "No manuscripts found."
 
-      # Step 2: Fetch content from patch
-      - name: Print manuscript contents
+      # Step 2: Print content and extract name & category
+      - name: Extract name and category
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           while IFS= read -r file; do
             [ -z "$file" ] && continue
 
-            echo "=== Content of $file ==="
+            echo "=== Processing $file ==="
 
             # Get patch for this file and strip leading '+'
-            gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+            content=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
               --jq ".[] | select(.filename==\"$file\") | .patch" \
-              | sed 's/^+//'
+              | sed 's/^+//')
 
+            echo "Full content:"
+            echo "$content"
             echo ""
+
+            # Extract category (single quotes)
+            category=$(echo "$content" | grep -E "category[ ]*=>[ ]*'.*'" | sed -E "s/.*=>[ ]*'([^']+)'.*/\1/")
+
+            # Extract name (single quotes)
+            name=$(echo "$content" | grep -E "name[ ]*=>[ ]*'.*'" | sed -E "s/.*=>[ ]*'([^']+)'.*/\1/")
+
+            echo "Extracted fields:"
+            echo "Name: $name"
+            echo "Category: $category"
             echo "=============================="
             echo ""
           done < manuscript.txt
