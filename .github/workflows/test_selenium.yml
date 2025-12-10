@@ -44,8 +44,13 @@ jobs:
             echo "$content" > temp.manuscript
       
             # Extract name and category (handles single or double quotes)
-            name=$(grep -E '^name\s*=>' temp.manuscript | sed -E 's/name\s*=>\s*["'"'"']([^"'"'"']*)["'"'"'].*/\1/')
-            category=$(grep -E '^category\s*=>' temp.manuscript | sed -E 's/category\s*=>\s*["'"'"']([^"'"'"']*)["'"'"'].*/\1/')
+            # Extract name (handles single or double quotes, optional spaces, optional trailing comma)
+            name=$(grep -E '^\s*name\s*=>' temp.manuscript | sed -E "s/^\s*name\s*=>\s*['\"]([^'\"]*)['\"].*/\1/")
+            
+            # Extract category (also trim leading/trailing spaces inside the quotes)
+            category=$(grep -E '^\s*category\s*=>' temp.manuscript | sed -E "s/^\s*category\s*=>\s*['\"]\s*([^'\"]*?)\s*['\"].*/\1/")
+
+
       
             echo "Name: $name"
             echo "Category: $category"
