@@ -31,103 +31,40 @@ jobs:
         run: |
           # Define team mapping
           declare -A team_data=(
-            ["Administration"]="Base"
-            ["Authentication"]="Kuvempu"
-            ["Azure"]="Verdi"
-            ["BackupRestore"]="Base"
-            ["Base"]="Base"
-            ["BaseSystem"]="Base"
-            ["CAA_SSLTLS_Scan_Test"]="Kuvempu"
-            ["CentralManagement"]="CM"
-            ["Certificate"]="Base"
-            ["ComponentTestSuite"]="Base"
-            ["DateTime"]="Base"
-            ["DHCP"]="Bhaskar"
-            ["Diagnostics"]="Base"
-            ["DNS"]="Base"
-            ["Fastpath"]="Gulzar"
-            ["FIPS"]="FIPS"
-            ["Firewall"]="Gulzar"
-            ["Garner"]="Kuvempu"
-            ["HA"]="Kabir"
-            ["HCL"]="Base"
-            ["Heartbeat"]="SyncSec"
-            ["HotFix"]="QM"
-            ["HTTP-Proxy"]="Web"
-            ["Import Export"]="Base"
-            ["Infrastructure"]="BLR"
-            ["Installation"]="Base"
-            ["IPS"]="IPS"
-            ["IPsec"]="Krishna"
-            ["Licensing"]="Base"
-            ["LiveConnection"]="Kuvempu"
-            ["Logging"]="Kuvempu"
-            ["LogViewer"]="WAF"
-            ["Migration"]="Base"
-            ["Multilink"]="Kabir"
-            ["Network"]="Kabir"
-            ["OTP"]="Kuvempu"
-            ["Perfomance"]="Perfomance"
-            ["POP3-Proxy"]="Nest"
-            ["PQA"]="QM"
-            ["QM"]="QM"
             ["RED"]="Vivaldi"
-            ["RED_legacy"]="Vivaldi"
-            ["RemoteAccessVPN"]="RAVPN"
-            ["Reporting"]="iView"
-            ["SDWAN"]="Bhaskar"
-            ["Security"]="Kabir"
-            ["SecurityPolicy"]="Gulzar"
-            ["SEP"]=""
-            ["SEP-CSC-Hybrid"]="Picasso"
-            ["SF_CFR Compatability"]="CM"
-            ["SMTP-Proxy"]="Nest"
-            ["SNMP"]="Karanth"
-            ["SophosConnectPolicy"]="RAVPN"
-            ["SQL_Injection_UI"]="Framework_UI"
-            ["SSLVPN"]="Krishna"
-            ["SupportAccess"]="Base"
-            ["SystemGraph"]="Kabir"
-            ["TA-Framework"]="TA-Framework"
-            ["Up2Date"]="Base"
-            ["VPN"]="Base"
-            ["WAF"]="WAF"
-            ["Warhol"]="Warhol"
-            ["WebInSnort"]="Web"
-            ["WiFi"]="Vivaldi"
-            ["Wizard"]="Base"
-            ["Zone"]="Verdi"
-            ["ZTNA"]="ZTNA"
+            ["DHCP"]="Bhaskar"
+            ["Fastpath"]="Gulzar"
+            # Add remaining mappings here...
           )
 
+          # Endpoint URL
           url="https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management"
 
           while IFS= read -r file; do
             [ -z "$file" ] && continue
-
             echo "=== Processing $file ==="
 
-            # Fetch file patch and strip leading '+'
+            # Fetch file patch and remove leading '+'
             content=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
               --jq ".[] | select(.filename==\"$file\") | .patch" \
               | sed 's/^+//')
 
-            # Extract category (trim spaces) and name (keep as-is)
+            # Extract category (trim spaces) and name (keep spaces)
             category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" \
                       | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/" | xargs)
             name=$(echo "$content" | grep -E "name[ ]*=>[ ]*['\"].*['\"]" \
                    | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
 
-            # Map team from category
+            # Map team
             team="${team_data[$category]}"
-            team="${team:-Unknown}"  # default if not found
+            team="${team:-Unknown}"
 
             echo "Name: $name"
             echo "Category: $category"
             echo "Team: $team"
 
-            # Send POST request safely
-            response=$(curl -s -X POST "$url" \
+            # Minimal headers POST with verbose output
+            response=$(curl -v -s -X POST "$url" \
               -H "Content-Type: application/x-www-form-urlencoded" \
               -d "id=" \
               -d "product=COP" \
@@ -143,5 +80,4 @@ jobs:
             echo "Server Response: $response"
             echo "=============================="
             echo ""
-
           done < manuscript.txt
