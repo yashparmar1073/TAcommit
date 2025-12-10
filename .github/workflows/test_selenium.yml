@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Step 1: Fetch .manuscript files
+      # Step 1: Fetch all .manuscript filenames
       - name: Fetch manuscript filenames
         env:
           GH_TOKEN: ${{ github.token }}
@@ -27,7 +27,7 @@ jobs:
           echo "Manuscript files found:"
           cat manuscript.txt || echo "No manuscripts found."
 
-      # Step 2: Fetch content & extract name and category
+      # Step 2: Fetch content & extract name and category using shell
       - name: Extract name and category from manuscripts
         env:
           GH_TOKEN: ${{ github.token }}
@@ -35,29 +35,23 @@ jobs:
           while read file; do
             echo "=== Processing $file ==="
 
-            # Get raw_url for the manuscript file
+            # Get raw_url for the file in the PR
             raw_url=$(gh api \
               repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
               --jq ".[] | select(.filename==\"$file\") | .raw_url")
 
-            # Fetch file content
+            # Fetch the file content
             curl -H "Authorization: token $GH_TOKEN" -s "$raw_url" > temp.manuscript
 
-            # Extract name and category safely using Python
-            python3 - <<EOF
-            import re
-            
-            with open("temp.manuscript") as f:
-                data = f.read()
-            
-            # Regex to handle both single and double quotes
-            name_match = re.search(r'name\s*=>\s*["\']([^"\']+)["\']', data)
-            category_match = re.search(r'category\s*=>\s*["\']([^"\']+)["\']', data)
-            
-            name = name_match.group(1) if name_match else "<missing>"
-            category = category_match.group(1) if category_match else "<missing>"
-            
-            print(f"Name: {name}")
-            print(f"Category: {category}")
-            EOF 
+            # Extract name and category (handles single or double quotes)
+            name=$(grep -E '^name\s*=>' temp.manuscript | sed -E 's/^name\s*=>\s*["'\''"]?([^"'\''",]+)["'\''"]?,?/\1/')
+            category=$(grep -E '^category\s*=>' temp.manuscript | sed -E 's/^category\s*=>\s*["'\''"]?([^"'\''",]+)["'\''"]?,?/\1/')
+
+            # Fallback if fields are missing
+            [ -z "$name" ] && name="<missing>"
+            [ -z "$category" ] && category="<missing>"
+
+            echo "Name: $name"
+            echo "Category: $category"
+            echo ""
           done < manuscript.txt
