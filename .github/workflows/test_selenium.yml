@@ -112,39 +112,23 @@ jobs:
               --jq ".[] | select(.filename==\"$file\") | .patch" \
               | sed 's/^+//')
 
-            # Extract category and trim spaces (single or double quotes)
+            # Extract category (trim spaces) and name (keep as-is)
             category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" \
                       | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/" | xargs)
-
-            # Extract name (single or double quotes), keep spaces intact
             name=$(echo "$content" | grep -E "name[ ]*=>[ ]*['\"].*['\"]" \
                    | sed -E "s/.*=>[ ]*['\"]([^'\"]+)['\"].*/\1/")
 
             # Map team from category
             team="${team_data[$category]}"
-            if [ -z "$team" ]; then
-              team="Unknown"
-            fi
+            team="${team:-Unknown}"  # default if not found
 
             echo "Name: $name"
             echo "Category: $category"
             echo "Team: $team"
 
-            # Send POST request
+            # Send POST request safely
             response=$(curl -s -X POST "$url" \
-              -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8" \
-              -H "Accept-Language: en-US,en;q=0.5" \
-              -H "Accept-Encoding: gzip, deflate, br, zstd" \
               -H "Content-Type: application/x-www-form-urlencoded" \
-              -H "Origin: https://core.heimdall.c03.pit.els.sophos" \
-              -H "Connection: keep-alive" \
-              -H "Referer: $url" \
-              -H "Upgrade-Insecure-Requests: 1" \
-              -H "Sec-Fetch-Dest: document" \
-              -H "Sec-Fetch-Mode: navigate" \
-              -H "Sec-Fetch-Site: same-origin" \
-              -H "Sec-Fetch-User: ?1" \
-              -H "Priority: u=0, i" \
               -d "id=" \
               -d "product=COP" \
               -d "product_add=" \
@@ -154,7 +138,7 @@ jobs:
               -d "team=$team" \
               -d "effort=0" \
               -d "notes=" \
-              -d "OK=OK")
+              -d "OK=OK") || echo "Curl failed for $file"
 
             echo "Server Response: $response"
             echo "=============================="
