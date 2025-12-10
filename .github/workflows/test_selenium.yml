@@ -14,7 +14,13 @@ jobs:
         run: |
           gh api \
           repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-          | jq '.[] | {filename, status, type: (.filename | type)}'
+          | jq '.[] | {filename, status, type: (.filename | type)}' \
+          > manuscripts.txt
+
+      - name: Show manuscript file names
+        run: |
+          echo "Found manuscript files:"
+          cat manuscripts.txt
 
       # - name: Fetch added .manuscript files
       #   env:
