@@ -43,10 +43,10 @@ jobs:
             # Fetch the file content
             curl -H "Authorization: token $GH_TOKEN" -s "$raw_url" > temp.manuscript
 
-            # Extract name and category (handles single or double quotes)
-            name=$(grep -E '^name\s*=>' temp.manuscript | sed -E 's/^name\s*=>\s*["'\''"]?([^"'\''",]+)["'\''"]?,?/\1/')
-            category=$(grep -E '^category\s*=>' temp.manuscript | sed -E 's/^category\s*=>\s*["'\''"]?([^"'\''",]+)["'\''"]?,?/\1/')
-
+            # Extract name and category (single quotes only)
+            name=$(grep -E "^name\s*=>" temp.manuscript | sed -E "s/^name\s*=>\s*'([^']+)'.*/\1/")
+            category=$(grep -E "^category\s*=>" temp.manuscript | sed -E "s/^category\s*=>\s*'([^']+)'.*/\1/")
+            
             # Fallback if fields are missing
             [ -z "$name" ] && name="<missing>"
             [ -z "$category" ] && category="<missing>"
