@@ -7,18 +7,14 @@ on:
 jobs:
   list-new-files:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           
-      - name: Run gh command
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh repo view ${{ github.repository }}
-
       - name: Fetch PR files
         run: |
           gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
