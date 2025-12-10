@@ -35,16 +35,10 @@ jobs:
           while read file; do
             echo "=== Content of $file ==="
       
-            # Get raw_url for the file in the PR (quotes removed)
+             # Get raw_url for the file in the PR
             raw_url=$(gh api \
               repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-              --jq '.[] | select(.filename=="'"$file"'") | .raw_url' \
-              --raw-output)
-      
-            # Fetch and print the file content
+              --jq '.[] | select(.filename=="'"$file"'") | .raw_url' | tr -d '"')
+            
+            # Fetch and print content
             curl -H "Authorization: token $GH_TOKEN" -s "$raw_url"
-      
-            echo ""
-            echo "=============================="
-            echo ""
-          done < manuscript.txt
