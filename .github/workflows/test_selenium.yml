@@ -16,34 +16,34 @@ jobs:
           repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
           | jq '.[] | {filename, status, type: (.filename | type)}'
 
-      - name: Fetch added .manuscript files
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh api \
-          repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
-          --jq '.[] 
-            | select(.status == "added" 
-                     and (.filename | type == "string" and endswith(".manuscript"))) 
-            | .filename' \
-            > manuscripts.txt
+      # - name: Fetch added .manuscript files
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   run: |
+      #     gh api \
+      #     repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
+      #     --jq '.[] 
+      #       | select(.status == "added" 
+      #                and (.filename | type == "string" and endswith(".manuscript"))) 
+      #       | .filename' \
+      #       > manuscripts.txt
 
 
-      - name: Show manuscript file names
-        run: |
-          echo "Found manuscript files:"
-          cat manuscripts.txt
+      # - name: Show manuscript file names
+      #   run: |
+      #     echo "Found manuscript files:"
+      #     cat manuscripts.txt
 
-      - name: Fetch manuscript content
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          while read file; do
-            echo "=== $file ==="
-            gh api \
-              repos/${{ github.repository }}/contents/$file \
-              --field ref=refs/pull/${{ github.event.pull_request.number }}/head \
-              --jq '.content' \
-            | base64 --decode
-            echo
-          done < manuscripts.txt
+      # - name: Fetch manuscript content
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   run: |
+      #     while read file; do
+      #       echo "=== $file ==="
+      #       gh api \
+      #         repos/${{ github.repository }}/contents/$file \
+      #         --field ref=refs/pull/${{ github.event.pull_request.number }}/head \
+      #         --jq '.content' \
+      #       | base64 --decode
+      #       echo
+      #     done < manuscripts.txt
