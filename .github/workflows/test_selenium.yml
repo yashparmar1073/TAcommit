@@ -33,19 +33,20 @@ jobs:
           while read file; do
             echo "=== Processing $file ==="
 
-            # Fetch raw content of the file from PR branch
+            # Fetch raw content from the PR branch using the PR SHA
             content=$(gh api \
-              repos/${{ github.repository }}/contents/$file \
-              --field ref=refs/pull/${{ github.event.pull_request.number }}/head \
-              --jq '.content' | base64 --decode)
-
+            repos/${{ github.repository }}/contents/$file \
+            --field ref=${{ github.event.pull_request.head.sha }} \
+            --jq '.content' | base64 --decode)
+    
             echo "$content" > temp.manuscript
-
+    
             # Extract fields formatted like:  name => "ABC",
             name=$(grep -E '^name\s*=>' temp.manuscript | sed -E 's/name\s*=>\s*"([^"]*)".*/\1/')
             category=$(grep -E '^category\s*=>' temp.manuscript | sed -E 's/category\s*=>\s*"([^"]*)".*/\1/')
-
+    
             echo "Name: $name"
             echo "Category: $category"
             echo ""
           done < manuscript.txt
+     
