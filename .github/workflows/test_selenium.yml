@@ -14,19 +14,23 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}   # REQUIRED for gh CLI
         run: |
-          gh api \
-            repos/yashparmar1073/TAcommit/pulls/2/files \
-            --jq '.[] | select(.status == "added" and .filename | endswith(".manuscript")) | .filename' \
-            > manuscripts.txt
+         gh api \
+          repos/yashparmar1073/TAcommit/pulls/2/files \
+          --jq '.[] | select(.status == "added" and (.filename? | tostring | endswith(".manuscript"))) | .filename' \
+          > manuscripts.txt
+ 
 
       - name: Show manuscript file names
         run: cat manuscripts.txt
 
-      - name: Fetch added manuscript files
+      - name: Fetch manuscript content
         env:
-         GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-         gh api \
-            repos/yashparmar1073/TAcommit/pulls/2/files \
-            --jq '.[] | select(.status == "added" and (.filename | endswith(".manuscript"))) | .filename' \
-            > manuscripts.txt
+          while read file; do
+            echo "=== $file ==="
+            gh api repos/yashparmar1073/TAcommit/contents/$file \
+              --field ref=refs/pull/2/head \
+              --jq '.content' | base64 --decode
+            echo
+          done < manuscripts.txt
