@@ -44,8 +44,13 @@ jobs:
             curl -H "Authorization: token $GH_TOKEN" -s "$raw_url" > temp.manuscript
 
             # Extract name and category (single quotes only)
-            name=$(grep -E "^name\s*=>" temp.manuscript | sed -E "s/^name\s*=>\s*'([^']+)'.*/\1/")
-            category=$(grep -E "^category\s*=>" temp.manuscript | sed -E "s/^category\s*=>\s*'([^']+)'.*/\1/")
+            # Extract name
+            name=$(grep -E '^\s*name\s*=>' temp.manuscript | \
+                sed -E "s/^\s*name\s*=>\s*['\"]?\s*([^'\",]+?)\s*['\"]?,?/\1/")
+
+            # Extract category
+            category=$(grep -E '^\s*category\s*=>' temp.manuscript | \
+               sed -E "s/^\s*category\s*=>\s*['\"]?\s*([^'\",]+?)\s*['\"]?,?/\1/")
             
             # Fallback if fields are missing
             [ -z "$name" ] && name="<missing>"
