@@ -31,7 +31,6 @@ jobs:
         run: |
           # Define team mapping
           declare -A team_data=(
-            declare -A team_data=(
             ["Administration"]="Base"
             ["Authentication"]="Kuvempu"
             ["Azure"]="Verdi"
