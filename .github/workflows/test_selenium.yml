@@ -5,7 +5,9 @@ on:
 
 jobs:
   process-manuscripts:
-    runs-on: ubuntu-latest
+    runs-on:  ta-testcases
+    container:
+           image: artifactory.dc.pa.sophos:6555/sfos-dev-docker/sfos-ubuntu:24-04-1.0.12
 
     steps:
       - uses: actions/checkout@v4
