@@ -1,7 +1,11 @@
 name: Fetch Manuscripts and Send to Heimdall
 
 on:
-  pull_request:
+  workflow_dispatch:
+    inputs:
+      pull_request_number:
+        description: 'Pull Request Number'
+        required: true
 
 jobs:
   process-manuscripts:
