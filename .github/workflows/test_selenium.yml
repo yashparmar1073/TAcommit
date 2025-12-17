@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.inputs.pull_request_number }}/head
 
       # Step 1: Fetch manuscript filenames
       - name: Fetch manuscript filenames
