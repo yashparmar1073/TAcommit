@@ -5,11 +5,7 @@ on:
     inputs:
       pull_request_number:
         description: 'Pull Request Number (leave empty if running on current branch)'
-        required: false
-        type: string
-      branch:
-        description: 'Branch name (default: current branch)'
-        required: false
+        required: true
         type: string
 
 jobs:
@@ -37,8 +33,7 @@ jobs:
               > manuscript.txt || echo ""
           else
             echo "No PR number provided, searching for manuscripts in current branch..."
-            BRANCH="${{ inputs.branch || github.ref_name }}"
-            echo "Searching in branch: $BRANCH"
+            echo "Searching in branch: ${{ github.ref_name }}"
             find . -name "*.manuscript" -type f > manuscript.txt || echo ""
           fi
 
@@ -166,6 +161,7 @@ jobs:
             response=$(curl -v -s -X POST "$url" \
               -H "Content-Type: application/x-www-form-urlencoded" \
               -d "id=" \
+              
               -d "product=COP" \
               -d "product_add=" \
               -d "category=$category" \
