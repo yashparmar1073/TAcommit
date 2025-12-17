@@ -106,7 +106,7 @@ jobs:
             ["Wizard"]="Base"
             ["Zone"]="Verdi"
             ["ZTNA"]="ZTNA"
-          )
+           )
 
           # Endpoint URL
           url="https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management"
