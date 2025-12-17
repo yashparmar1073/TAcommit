@@ -4,8 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       pull_request_number:
-        description: 'Pull Request Number'
-        required: true
+        description: 'Pull Request Number (leave empty if running on current branch)'
+        required: false
+        type: string
+      branch:
+        description: 'Branch name (default: current branch)'
+        required: false
+        type: string
 
 jobs:
   process-manuscripts:
@@ -17,17 +22,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: refs/pull/${{ github.event.inputs.pull_request_number }}/head
 
       # Step 1: Fetch manuscript filenames
       - name: Fetch manuscript filenames
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
-            --jq '.[] | select(.filename | endswith(".manuscript")) | .filename' \
-            > manuscript.txt || echo ""
+          # Determine PR number or use current branch
+          if [ -n "${{ inputs.pull_request_number }}" ]; then
+            PR_NUMBER="${{ inputs.pull_request_number }}"
+            echo "Using PR number: $PR_NUMBER"
+            gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER/files" \
+              --jq '.[] | select(.filename | endswith(".manuscript")) | .filename' \
+              > manuscript.txt || echo ""
+          else
+            echo "No PR number provided, searching for manuscripts in current branch..."
+            BRANCH="${{ inputs.branch || github.ref_name }}"
+            echo "Searching in branch: $BRANCH"
+            find . -name "*.manuscript" -type f > manuscript.txt || echo ""
+          fi
 
       - name: Show manuscript filenames
         run: |
@@ -113,14 +126,27 @@ jobs:
           # Endpoint URL
           url="https://core.heimdall.c03.pit.els.sophos/results/testcase_mgmt.php?nav=Testcases&subnav=Management"
 
+          PR_NUMBER="${{ inputs.pull_request_number }}"
+
           while IFS= read -r file; do
             [ -z "$file" ] && continue
             echo "=== Processing $file ==="
 
-            # Fetch file patch and remove leading '+'
-            content=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
-              --jq ".[] | select(.filename==\"$file\") | .patch" \
-              | sed 's/^+//')
+            # Fetch file content based on whether PR number is provided
+            if [ -n "$PR_NUMBER" ]; then
+              # Fetch file patch from PR and remove leading '+'
+              content=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER/files" \
+                --jq ".[] | select(.filename==\"$file\") | .patch" \
+                | sed 's/^+//')
+            else
+              # Read file directly from current branch
+              content=$(cat "$file" 2>/dev/null || echo "")
+            fi
+
+            if [ -z "$content" ]; then
+              echo "Warning: Could not fetch content for $file, skipping..."
+              continue
+            fi
 
             # Extract category (trim spaces) and name (keep spaces)
             category=$(echo "$content" | grep -E "category[ ]*=>[ ]*['\"].*['\"]" \
@@ -154,3 +180,4 @@ jobs:
             echo "=============================="
             echo ""
           done < manuscript.txt
+
