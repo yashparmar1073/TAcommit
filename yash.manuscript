@@ -1,0 +1,447 @@
+do './Shared/cop/shared_regex_file.pl';
+return{
+    name        => 'yash',
+    category    => 'RED',
+    keywords    => [],
+    description => 'basic red wirelss test ',
+    archive     => 1,
+    duration    => 60,
+    lease_vlan  =>  3,
+
+    actors => {
+        appliance => {
+            sw_os   => 'COP',
+            is_dut  => '1',
+            groups  => [ 'Wireless' ],
+            install => {
+                groups => [ 'Wireless' ],
+            },
+            hw_type =>
+                '^(XG|XGS)(106W|107W|115W|116W|125W|126W|135W|136W).*$',
+            nics => {
+                eth1 => {
+                    untag => 'NET-TA-1',    # WAN
+                },
+            },
+        },
+
+        gw_appliance => {
+            sw_os => 'COP',
+            nics  => {
+                eth1 => {
+                    untag => 'LEASED_1', ### To WAN ports of Physical RED with DHCP server
+                },
+            },
+        },
+        client => {
+            sw_os => 'Ubuntu',
+            nics  => {
+                eth1 => {
+                    untag => 'NET-QA-ASG',
+                },
+            },
+        },
+
+    },
+
+    resources => {
+
+        rpi => {
+
+            #name => ['c07-vivaldi-rpi-02'],
+            groups => [ 'WIFI6-Wireless-Client' ],
+        },
+
+        red => {
+            hw_type => '^(RED20|RED60).*$',
+            groups  => [ 'RED/WIFI' ],
+            nics    => {
+                eth1 => {
+                    untag => 'LEASED_1',    ## connection to WAN gw_appliance
+                },
+            },
+        },
+    },
+
+    steps => [
+
+        ####################################################################################################
+        #  Basic setup steps for red
+        ####################################################################################################
+
+        # step 1
+        # Test : Temporary step to copy ta-tools file
+        [
+            appliance => {
+                file => 'Shared/shell_command.t',
+                params =>
+                    '--cmd "cp /opt/ta_testcase/Wireless.pm /opt/TA/lib/TA/Cfg/Net/"',
+            },
+        ],
+
+        # step 2
+        [
+            client => {
+                file   => '../../Wireless/client/cfg_pi.t',
+                params => '--reboot --resource rpi',
+            },
+        ],
+
+        # step 3
+        ## Empty /log/red-*/ log files
+        [
+            appliance => {
+                file   => 'Shared/exec_cmd.t',
+                params => '--cmd="rm -rf /log/red-*.log"'
+            },
+        ],
+
+        # step 4
+        ## Create default nat policy for default masq
+        [
+            appliance => {
+                file   => '../../Firewall/cop/cfg_nat_rule.t',
+                params => '--create --name default_nat --trans-source MASQ',
+            },
+        ],
+
+        # step 5
+        # create firewall rules (Any to Any)
+        [
+            appliance => {
+                file => '../../Firewall/cop/cfg_firewall_rule.t',
+                params =>
+                    '--create --netpolicy --name policy --position top --szone Any --dzone Any',
+            },
+        ],
+
+        # step 6
+        # create firewall rules (Any to Any)
+        [
+            gw_appliance => {
+                file => '../../Firewall/cop/cfg_firewall_rule.t',
+                params =>
+                    '--create --netpolicy --name policy --position top --szone Any --dzone Any',
+            },
+        ],
+
+        # step 7
+        ## Create default nat policy for default masq
+        [
+            gw_appliance => {
+                file   => '../../Firewall/cop/cfg_nat_rule.t',
+                params => '--create --name default_nat --trans-source MASQ',
+            },
+        ],
+
+        # step 8
+        # enable syslogwatcher
+        [
+            appliance => {
+                file   => 'Shared/syslogwatcher.t',
+                params => '--session red_kernel --start',
+            },
+
+        ],
+
+        # step 9
+        # activate red
+        [
+            appliance => {
+                file   => '../cop/cfg_global_settings.t',
+                params => '--enable',
+            },
+        ],
+
+        # step 10
+        # enable RED beta firmware
+        [
+            appliance => {
+                file   => '../cop/cfg_global_settings.t',
+                params => '--use_unified_firmware',
+            },
+        ],
+
+        ####################################################################################################
+        #  config gw_appliance for DHCP server
+        ####################################################################################################
+
+        # step 11
+        [
+            gw_appliance => {
+                file   => '../../DHCP/cop/cfg_dhcp_server.t',
+                params => '--arm',
+            },
+            appliance => {
+                file   => '../../DHCP/cop/cfg_dhcp_server.t',
+                params => '--arm',
+            },
+        ],
+
+        # step 12
+        [
+            gw_appliance => {
+                file => '../../Network/cop/cfg_static_interface.t',
+                params =>
+                    '--name eth1 --edit --ipv4 192.168.1.1/24 --zone LAN',
+            },
+        ],
+
+        # step 13
+        [
+            gw_appliance => {
+                file => '../../DHCP/cop/cfg_dhcp_server.t',
+                params =>
+                    '--add --interface=eth1 --ranges=192.168.1.2-192.168.1.10 --name=RED --version=4',
+            },
+        ],
+
+        # step 14
+        [
+            appliance => {
+                file   => 'Shared/syslogwatcher.t',
+                params => '--session red_online --start'
+            },
+        ],
+
+        # step 15
+        [
+            appliance => {
+                file => '../cop/cfg_red.t',
+                params =>
+                    '--add --route-mode default --red-ip 192.168.60.1 --red-dhcp-start 192.168.60.2 '
+                    . '--red-dhcp-end 192.168.60.100 --red-netmask 255.255.255.0 --branchname red --ressource red ',
+            },
+        ],
+
+        # step 16
+        [
+            appliance => {
+                file   => 'Shared/power_cycle.t',
+                params => '--system red',
+            },
+        ],
+
+        # step 17
+        [
+            appliance => {
+                file => '../unifiedfw/tools/check_log.t',
+                params =>
+                    '--resource red --type wait_for_up --uplink WAN1 --session red_online  --firstconfig 1'
+            }
+        ],
+
+        # step 18
+        [
+            appliance => {
+                file   => '../cop/check_red_status.t',
+                params => '--status online --branchname red --uplink=WAN1',
+            },
+        ],
+
+        # step 19
+        [
+            appliance => {
+                file   => 'Shared/syslogwatcher.t',
+                params => '--session redapx_online --start'
+            }
+        ],
+
+        ####################################################################################################
+        # Setup Test for wireless
+        ####################################################################################################
+
+        # step 20
+        # create lan type custom zone
+        [
+            appliance => {
+                file => '../../Network/cop/cfg_zone.t',
+                params =>
+                    '--create custom_zone --description "This is a custom zone of LAN type" --zonetype lan --service https --service ping --service dns --service ssh --service red --service radius_sso --service wireless_prot',
+            }
+        ],
+
+        # step 21
+        [
+            appliance => {
+                file => '../../Wireless/cop/cfg_wireless_protection.t',
+                params =>
+                    '--enable --allowed-zone LAN --allowed-zone WiFi --allowed-zone DMZ --allowed-zone VPN --allowed-zone custom_zone',
+            },
+        ],
+
+        # step 22
+        [
+            appliance => {
+                file => '../../Wireless/tools/chk_log.t',
+                params =>
+                    '--resource red --type wait_for_pending --session redapx_online'
+            }
+        ],
+
+        # step 23
+        # accept red from pending access point
+        [
+            appliance => {
+                file   => '../cop/accept_red.t',
+                params => '--resource red',
+            },
+        ],
+
+        # step 24
+        [
+            appliance => {
+                file => '../unifiedfw/tools/check_log.t',
+                params =>
+                    '--resource red --type wait_for_up --uplink WAN1 --session redapx_online '
+            },
+        ],
+
+        # step 25
+        [
+            appliance => {
+                file => '../../Wireless/tools/chk_log.t',
+                params =>
+                    '--resource red --type wait_for_active --session redapx_online'
+            }
+        ],
+
+        # step 26
+        [
+            appliance => {
+                file => '../../Wireless/cop/cfg_wireless_networks.t',
+                params =>
+                    '--add --name w2p_sz_1 --hw w2p_sz_1 --passphrase 1234567890 --security-mode wpa2_personal --type none --zone WiFi --testregistry-key mynetwork1',
+            },
+        ],
+
+        # step 27
+        [
+            appliance => {
+                file => '../../Wireless/cop/cfg_wireless_networks.t',
+                params =>
+                    '--add --name w2p_b2a_2 --hw w2p_b2a_2 --passphrase 1234567890 --security-mode wpa2_personal --type lan --testregistry-key mynetwork2',
+            },
+        ],
+
+        # step 28
+        #this step is change in our case
+        #we have to add red here
+        [
+            appliance => {
+                file   => '../../Wireless/cop/assign_wireless_network.t',
+                params => '--resource red --networks w2p_sz_1  ',
+            },
+        ],
+
+        ####################################################################################################
+        # RPi: wireless client configuration and connectivity steps
+        ####################################################################################################
+
+        # step 29
+        # configure interface eth1
+        [
+            client => {
+                file   => '../../Network/client/cfg_interface_ubuntu.t',
+                params => '--add NET-QA-ASG --version 4 --dev eth1',
+            },
+        ],
+
+        # step 30
+        [
+            client => {
+                file => '../../Wireless/client/cfg_wireless_client.t',
+                params =>
+                    '--create-supplicant-file --wlnettype wpa2_personal --passphrase 1234567890 --testregistry-key mynetwork1 --resource rpi',
+            },
+        ],
+
+        # step 31
+        [
+            client => {
+                file   => '../../Wireless/client/cfg_wireless_client.t',
+                params => '--add-routes --resource rpi',
+            },
+        ],
+
+        # step 32
+        [
+            client => {
+                file => '../../Wireless/client/cfg_wireless_client.t',
+                params =>
+                    '--connect --wlnettype wpa2_personal --testregistry-key mynetwork1 --resource rpi',
+            },
+        ],
+
+        # step 33
+        [
+            client => {
+                file   => '../../Wireless/client/cfg_wireless_client.t',
+                params => '--disconnect --resource rpi',
+            },
+        ],
+
+        # step 34
+        [
+            client => {
+                file => '../../Wireless/client/cfg_wireless_client.t',
+                params =>
+                    '--create-supplicant-file --wlnettype wpa2_personal --passphrase 1234567890 --testregistry-key mynetwork2 --resource rpi',
+            },
+        ],
+
+        # step 35
+        [
+            client => {
+                file => '../../Wireless/client/cfg_wireless_client.t',
+                params =>
+                    '--connect --wlnettype wpa2_personal --testregistry-key mynetwork2 --resource rpi',
+            },
+        ],
+
+        # step 36
+        [
+            client => {
+                file => '../../Wireless/client/cfg_wireless_client.t',
+                params =>
+                    '--wifi-details protocol --expected-wifi-detail 802.11ax',
+            },
+        ],
+
+        # step 37
+        [
+            client => {
+                file   => '../../Wireless/client/cfg_wireless_client.t',
+                params => '--disconnect --resource rpi',
+            },
+        ],
+
+        # step 38
+        [
+            appliance => {
+                file   => '../../Wireless/cop/cfg_wireless_networks.t',
+                params => '--remove --name w2p_sz_1',
+            },
+        ],
+
+        # step 39
+        [
+            appliance => {
+                file   => '../../Wireless/cop/cfg_wireless_networks.t',
+                params => '--remove --name w2p_b2a_2',
+            },
+        ],
+
+        ############### Cleanup step to reboot Raspberry Pi ################
+
+        # step 40
+        [
+            client => {
+                file   => '../../Wireless/client/cfg_pi.t',
+                params => '--reboot --resource rpi',
+            },
+        ],
+
+    ],
+};
+
