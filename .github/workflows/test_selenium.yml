@@ -8,7 +8,8 @@ on:
         required: true
 
 jobs:
-  runs-on:  ubuntu-latest
+  process-manuscripts:
+    runs-on: ubuntu-latest
   # process-manuscripts:
   #   runs-on:  ta-testcases
   #   container:
